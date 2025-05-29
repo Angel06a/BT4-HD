@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>BT4 HD</title>
+  <link rel="icon" type="image/webp" href="img/favicon.webp" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #0d070d;
+      font-family: Arial, sans-serif;
+      color: white;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      overflow-x: hidden;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #222;
+      border-bottom: 2px solid #ffa500;
+      padding: 0 20px;
+      z-index: 1000;
+      box-sizing: border-box;
+      transition: opacity 0.3s ease;
+    }
+
+    header.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .logo-container img {
+      height: 30px;
+      width: auto;
+      cursor: pointer;
+    }
+
+    .title {
+      flex-grow: 1;
+      text-align: center;
+      font-size: 16px;
+      color: #ffa500;
+      font-weight: bold;
+    }
+
+    .youtube-icon-link img {
+      height: 30px;
+      width: auto;
+      cursor: pointer;
+      display: block;
+    }
+
+    .youtube-icon-link {
+      display: inline-block;
+      text-decoration: none;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    main {
+      margin-top: 60px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .slider-container {
+      position: relative;
+      width: 50vw;
+      max-width: 800px;
+      aspect-ratio: 600 / 350;
+      overflow: hidden;
+      border: 2px solid #ffa500;
+      background-color: #222;
+      margin: 0 auto;
+    }
+
+    .slider-images, .fullscreen-slider {
+      display: flex;
+      height: 100%;
+      transition: transform 0.5s ease-in-out;
+    }
+
+    .slider-images img, .fullscreen-slider img {
+      width: 100%;
+      height: 100%;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .slider-images img {
+      object-fit: fill;
+    }
+
+    .fullscreen-slider img {
+      object-fit: cover;
+    }
+
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 30px;
+      color: white;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .arrow.left {
+      left: 10px;
+    }
+
+    .arrow.right {
+      right: 10px;
+    }
+
+    .download-container {
+      margin-top: 20px;
+      padding: 16px 24px;
+      border: 2px solid #ffa500;
+      border-radius: 8px;
+      width: 70vw;
+      max-width: 800px;
+      background-color: #222;
+      box-sizing: border-box;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: #ffd700;
+      font-weight: bold;
+      font-size: 18px;
+      flex-direction: column;
+    }
+
+    .download-button {
+      background-color: #ffd700;
+      border: none;
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 6px;
+      color: black;
+      font-weight: normal;
+      transition: background-color 0.3s ease;
+      margin: 4px 6px;
+    }
+
+    .download-button:hover {
+      background-color: #ffcc00;
+    }
+
+    .fullscreen-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .fullscreen-container {
+      position: relative;
+      width: 90vw;
+      aspect-ratio: 600 / 350;
+      max-width: 1000px;
+      max-height: 90vh;
+      border: 4px solid #ffa500;
+      overflow: hidden;
+    }
+
+    .fullscreen-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 40px;
+      color: white;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      cursor: pointer;
+      z-index: 3;
+    }
+
+    .fullscreen-arrow.left {
+      left: 10px;
+    }
+
+    .fullscreen-arrow.right {
+      right: 10px;
+    }
+
+    .close-icon {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 28px;
+      color: white;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 6px 12px;
+      cursor: pointer;
+      z-index: 3;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+
+  <header id="header">
+    <div class="logo-container">
+      <img src="img/logo.webp" alt="Logo" />
+    </div>
+    <div class="title">Dragon Ball Z - Budokai Tenkaichi 4 Texture Pack HD</div>
+    <a href="https://www.youtube.com/@angel06-p7v" target="_blank" class="youtube-icon-link" aria-label="Visitar canal de YouTube">
+      <img src="img/youtube-icon.webp" alt="YouTube" />
+    </a>
+  </header>
+
+  <main>
+    <div>
+      <div class="slider-container">
+        <div class="arrow left" onclick="prevSlide()">&#10094;</div>
+        <div class="arrow right" onclick="nextSlide()">&#10095;</div>
+        <div class="slider-images" id="sliderImages"></div>
+      </div>
+
+      <div class="download-container">
+        <div class="download-title">Descargas:</div>
+        <div id="downloadContainer" class="download-buttons"></div>
+      </div>
+    </div>
+  </main>
+
+  <div class="fullscreen-overlay" id="fullscreenOverlay">
+    <div class="fullscreen-container">
+      <div class="fullscreen-arrow left" onclick="prevFullscreen()">&#10094;</div>
+      <div class="fullscreen-arrow right" onclick="nextFullscreen()">&#10095;</div>
+      <span class="close-icon" onclick="closeFullscreen()">&#10006;</span>
+      <div class="fullscreen-slider" id="fullscreenSlider"></div>
+    </div>
+  </div>
+
+  <!-- Scripts externos -->
+  <script src="list.js"></script>
+  <script src="img.js"></script>
+
+  <script>
+    const downloadContainer = document.getElementById("downloadContainer");
+    const sliderImages = document.getElementById("sliderImages");
+    const fullscreenSlider = document.getElementById("fullscreenSlider");
+    const overlay = document.getElementById("fullscreenOverlay");
+    const header = document.getElementById("header");
+
+    // Cargar botones desde list.js
+    if (typeof listData !== 'undefined') {
+      const lines = listData.trim().split("\n").filter(Boolean);
+      lines.forEach(line => {
+        const match = line.match(/-(.*?)\s+"(.*?)"/);
+        if (match) {
+          const name = match[1].trim();
+          const url = match[2].trim();
+          const btn = document.createElement("button");
+          btn.className = "download-button";
+          btn.textContent = name;
+          btn.onclick = () => window.open(url, "_blank");
+          downloadContainer.appendChild(btn);
+        }
+      });
+    }
+
+    // Cargar imágenes desde img.js
+    let currentIndex = 0;
+    let fullscreenIndex = 0;
+    let isSliding = false;
+    let isFullscreenSliding = false;
+    let imageList = [];
+
+    if (typeof imgData !== 'undefined') {
+      imageList = imgData.trim().split("\n").filter(Boolean).map(line => line.replace(/^-/, "").trim());
+
+      imageList.forEach((imgName, index) => {
+        const img = document.createElement("img");
+        img.src = `img/${imgName}`;
+        img.alt = `Imagen ${index + 1}`;
+        img.onclick = () => openFullscreen(index);
+        sliderImages.appendChild(img);
+
+        const imgFull = img.cloneNode();
+        fullscreenSlider.appendChild(imgFull);
+      });
+    }
+
+    function getSlideWidth() {
+      return sliderImages.children[0].clientWidth;
+    }
+
+    function showSlide(index) {
+      currentIndex = (index + imageList.length) % imageList.length;
+      const slideWidth = getSlideWidth();
+      sliderImages.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+    }
+
+    function nextSlide() {
+      if (isSliding) return;
+      isSliding = true;
+      showSlide(currentIndex + 1);
+      setTimeout(() => (isSliding = false), 500);
+    }
+
+    function prevSlide() {
+      if (isSliding) return;
+      isSliding = true;
+      showSlide(currentIndex - 1);
+      setTimeout(() => (isSliding = false), 500);
+    }
+
+    function getFullscreenWidth() {
+      return fullscreenSlider.children[0].clientWidth;
+    }
+
+    function openFullscreen(index) {
+      fullscreenIndex = index;
+      overlay.style.display = "flex";
+      header.classList.add("hidden");
+      updateFullscreenSlide();
+    }
+
+    function updateFullscreenSlide() {
+      const slideWidth = getFullscreenWidth();
+      fullscreenSlider.style.transform = `translateX(-${fullscreenIndex * slideWidth}px)`;
+    }
+
+    function nextFullscreen() {
+      if (isFullscreenSliding) return;
+      isFullscreenSliding = true;
+      fullscreenIndex = (fullscreenIndex + 1) % imageList.length;
+      updateFullscreenSlide();
+      setTimeout(() => (isFullscreenSliding = false), 500);
+    }
+
+    function prevFullscreen() {
+      if (isFullscreenSliding) return;
+      isFullscreenSliding = true;
+      fullscreenIndex = (fullscreenIndex - 1 + imageList.length) % imageList.length;
+      updateFullscreenSlide();
+      setTimeout(() => (isFullscreenSliding = false), 500);
+    }
+
+    function closeFullscreen() {
+      overlay.style.display = "none";
+      header.classList.remove("hidden");
+    }
+
+    window.addEventListener("resize", () => {
+      showSlide(currentIndex);
+      updateFullscreenSlide();
+    });
+
+    window.addEventListener("load", () => {
+      showSlide(currentIndex);
+      updateFullscreenSlide();
+    });
+
+    document.querySelector(".slider-container").addEventListener("wheel", (e) => {
+      e.preventDefault();
+      if (isSliding) return;
+      e.deltaY > 0 ? nextSlide() : prevSlide();
+    });
+
+    document.querySelector(".fullscreen-container").addEventListener("wheel", (e) => {
+      e.preventDefault();
+      if (isFullscreenSliding) return;
+      e.deltaY > 0 ? nextFullscreen() : prevFullscreen();
+    });
+  </script>
+</body>
+</html>
