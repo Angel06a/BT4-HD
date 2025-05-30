@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>BT4 HD</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/webp" href="img/favicon.webp" />
   <style>
     html, body {
@@ -225,6 +226,57 @@
       z-index: 3;
       border-radius: 50%;
     }
+
+    /* RESPONSIVE PARA CELULARES */
+    @media (max-aspect-ratio: 3/4) {
+      .slider-container {
+        width: 90vw;
+        height: auto;
+        aspect-ratio: 3 / 2;
+      }
+
+      .fullscreen-container {
+        width: 95vw;
+        max-height: 80vh;
+        aspect-ratio: 3 / 2;
+      }
+
+      .title {
+        font-size: 14px;
+      }
+
+      .download-container {
+        width: 90vw;
+        font-size: 16px;
+        padding: 12px 16px;
+      }
+
+      .download-button {
+        font-size: 13px;
+        padding: 6px 10px;
+      }
+
+      header {
+        height: 48px;
+        padding: 0 12px;
+      }
+
+      .logo-container img,
+      .youtube-icon-link img {
+        height: 28px;
+      }
+
+      .arrow,
+      .fullscreen-arrow {
+        font-size: 24px;
+        padding: 6px;
+      }
+
+      .close-icon {
+        font-size: 24px;
+        padding: 4px 8px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -274,7 +326,6 @@
     const overlay = document.getElementById("fullscreenOverlay");
     const header = document.getElementById("header");
 
-    // Cargar botones desde list.js
     if (typeof listData !== 'undefined') {
       const lines = listData.trim().split("\n").filter(Boolean);
       lines.forEach(line => {
@@ -291,7 +342,6 @@
       });
     }
 
-    // Cargar imágenes desde img.js
     let currentIndex = 0;
     let fullscreenIndex = 0;
     let isSliding = false;
