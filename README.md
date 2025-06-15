@@ -2,7 +2,7 @@
   <b>English</b> | <a href="README.es.md">Español</a> 
 </div>
 
-# 🉑Dragon Ball Z - Budokai Tenkaichi 4 - Texture Pack HD🐉
+# Dragon Ball Z 🉑 Budokai Tenkaichi 4 🐉 Texture Pack HD
 This texture pack adds higher resolution textures to the Dragon Ball Z - Budokai Tenkaichi 4 video game using the [pcsx2](https://pcsx2.net/) emulator.
 - [YouTube channel - AngeL06](https://www.youtube.com/@AngeL06-p7v)
 - [Games and programs website - Angel06Web](https://angel06a.github.io/Angel06Web/)
