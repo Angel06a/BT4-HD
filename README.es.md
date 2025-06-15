@@ -9,7 +9,6 @@ Este paquete de texturas agrega texturas de mayor resolución al videojuego Drag
 - [Web de juegos y programas - Angel06Web](https://angel06a.github.io/Angel06Web/)
 ## 🛠️Instalación
 ### PCSX2 (Emulador de ps2 para pc)
-Para colocar texturas descargadas en PCSX2⚙️:
 - Descomprime el archivo Zip que contiene las texturas.
 - Ve a la carpeta "Textures" configurada en PCSX2, por defecto esta en la carpeta raíz del emulador, luego dentro coloca la carpeta con el ID del juego (ej: SLUS-XXXXX) que contiene las texturas y listo.
 - Link del video tutorial: https://www.youtube.com/watch?v=ZZWElA5SZM8
