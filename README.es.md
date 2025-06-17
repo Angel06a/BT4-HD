@@ -3,7 +3,7 @@
 </div>
 
 # Dragon Ball Z 🉑 Budokai Tenkaichi 4 🐉 Texture Pack HD
-Este paquete de texturas agrega texturas de mayor resolución al videojuego Dragon Ball Z - Budokai Tenkaichi 4 usando el emulador [pcsx2](https://pcsx2.net/).
+Este paquete de texturas agrega texturas de mayor resolución al videojuego [Dragon Ball Z - Budokai Tenkaichi 4](https://teambt4.wixsite.com/teambt4projects/descarga) usando el emulador [pcsx2](https://pcsx2.net/).
 - [Web de descarga del pack de texturas - BT4 HD](https://angel06a.github.io/BT4-HD/)
 - [Canal de youTube - AngeL06](https://www.youtube.com/@AngeL06-p7v)
 - [Web de juegos y programas - Angel06Web](https://angel06a.github.io/Angel06Web/)
