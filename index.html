@@ -75,16 +75,35 @@
       flex-direction: column;
       align-items: center;
     }
+
+    /* Marco principal de imágenes */
     .slider-container {
       position: relative;
-      width: 50vw;
-      max-width: 800px;
-      aspect-ratio: 600 / 350;
+      width: 45.45vw; /* 1/2.2 del ancho en modo 16:9 */
+      aspect-ratio: 16 / 9; /* Relación fija */
       overflow: hidden;
       border: 2px solid #ffa500;
       background-color: #222;
       margin: 0 auto;
     }
+
+    /* Ajuste para móviles */
+    @media (max-aspect-ratio: 3/4) {
+      .slider-container {
+        width: 90vw; /* Casi todo el ancho en móviles */
+        margin: 0 auto;
+      }
+    }
+
+    /* Media query adicional para pantallas horizontales no 16:9 */
+    @media (min-aspect-ratio: 4/3) and (min-width: 800px) {
+      .slider-container {
+        width: 45.45vw;
+        max-width: 800px;
+      }
+    }
+
+    /* Estilos para carrusel y fullscreen */
     .slider-images, .fullscreen-slider {
       display: flex;
       height: 100%;
@@ -95,13 +114,13 @@
       height: 100%;
       flex-shrink: 0;
       cursor: pointer;
-    }
-    .slider-images img {
-      object-fit: fill;
-    }
-    .fullscreen-slider img {
       object-fit: cover;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      will-change: transform;
     }
+
+    /* Flechas del carrusel */
     .arrow {
       position: absolute;
       top: 50%;
@@ -119,6 +138,8 @@
     .arrow.right {
       right: 10px;
     }
+
+    /* Contenedor de descargas */
     .download-container {
       margin-top: 20px;
       padding: 16px 24px;
@@ -151,6 +172,8 @@
     .download-button:hover {
       background-color: #ffcc00;
     }
+
+    /* Marco de pantalla completa */
     .fullscreen-overlay {
       position: fixed;
       top: 0;
@@ -165,10 +188,7 @@
     }
     .fullscreen-container {
       position: relative;
-      width: 90vw;
-      aspect-ratio: 600 / 350;
-      max-width: 1000px;
-      max-height: 90vh;
+      aspect-ratio: 16 / 9;
       border: 4px solid #ffa500;
       overflow: hidden;
     }
@@ -201,16 +221,16 @@
       z-index: 3;
       border-radius: 50%;
     }
+
+    /* RESPONSIVE PARA CELULARES */
     @media (max-aspect-ratio: 3/4) {
       .slider-container {
         width: 90vw;
-        height: auto;
-        aspect-ratio: 3 / 2;
+        aspect-ratio: 16 / 9;
       }
       .fullscreen-container {
         width: 95vw;
-        max-height: 80vh;
-        aspect-ratio: 3 / 2;
+        aspect-ratio: 16 / 9;
       }
       .title {
         font-size: 14px;
@@ -285,7 +305,7 @@
     const overlay = document.getElementById("fullscreenOverlay");
     const header = document.getElementById("header");
 
-    // Procesar list.js
+    // Procesar descargas desde list.js
     if (typeof listData !== 'undefined') {
       const lines = listData.trim().split('\n').filter(Boolean);
       lines.forEach(line => {
@@ -302,12 +322,14 @@
       });
     }
 
-    // Procesar img.js
     let currentIndex = 0;
     let fullscreenIndex = 0;
     let isSliding = false;
     let isFullscreenSliding = false;
     let imageList = [];
+    let loadedCount = 0;
+
+    // Cargar imágenes desde img.js
     if (typeof imgData !== 'undefined') {
       imageList = imgData.trim().split('\n').filter(Boolean).map(line => line.replace(/^-[\s\uFEFF\xA0]*/, "").trim());
       imageList.forEach((imgName, index) => {
@@ -315,11 +337,13 @@
         img.src = `img/${imgName}`;
         img.alt = `Imagen ${index + 1}`;
         img.onload = () => {
-          if (index === 0) {
+          loadedCount++;
+          if (loadedCount === imageList.length) {
             showSlide(currentIndex);
             updateFullscreenSlide();
           }
         };
+        img.onerror = () => console.error(`Error cargando ${imgName}`);
         img.onclick = () => openFullscreen(index);
         sliderImages.appendChild(img);
         const imgFull = img.cloneNode();
@@ -327,25 +351,25 @@
       });
     }
 
+    // Funciones de navegación
     function getSlideWidth() {
-      return sliderImages.children[0]?.clientWidth || 0;
+      return sliderImages.children[0]?.offsetWidth || 0;
     }
-
     function showSlide(index) {
       currentIndex = (index + imageList.length) % imageList.length;
       const slideWidth = getSlideWidth();
-      if (slideWidth > 0) {
-        sliderImages.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
-      }
+      requestAnimationFrame(() => {
+        if (slideWidth > 0) {
+          sliderImages.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+        }
+      });
     }
-
     function nextSlide() {
       if (isSliding) return;
       isSliding = true;
       showSlide(currentIndex + 1);
       setTimeout(() => (isSliding = false), 500);
     }
-
     function prevSlide() {
       if (isSliding) return;
       isSliding = true;
@@ -353,24 +377,34 @@
       setTimeout(() => (isSliding = false), 500);
     }
 
-    function getFullscreenWidth() {
-      return fullscreenSlider.children[0]?.clientWidth || 0;
+    // Funciones de pantalla completa
+    function updateFullscreenSize() {
+      const container = document.querySelector(".fullscreen-container");
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const desiredWidth = Math.min(vw * 0.95, (vh * 0.95) * (16 / 9));
+      const desiredHeight = desiredWidth / (16 / 9);
+      container.style.width = `${desiredWidth}px`;
+      container.style.height = `${desiredHeight}px`;
     }
-
     function openFullscreen(index) {
       fullscreenIndex = index;
       overlay.style.display = "flex";
       header.classList.add("hidden");
+      updateFullscreenSize();
       updateFullscreenSlide();
     }
-
+    function getFullscreenWidth() {
+      return fullscreenSlider.children[0]?.offsetWidth || 0;
+    }
     function updateFullscreenSlide() {
       const slideWidth = getFullscreenWidth();
-      if (slideWidth > 0) {
-        fullscreenSlider.style.transform = `translateX(-${fullscreenIndex * slideWidth}px)`;
-      }
+      requestAnimationFrame(() => {
+        if (slideWidth > 0) {
+          fullscreenSlider.style.transform = `translateX(-${fullscreenIndex * slideWidth}px)`;
+        }
+      });
     }
-
     function nextFullscreen() {
       if (isFullscreenSliding) return;
       isFullscreenSliding = true;
@@ -378,7 +412,6 @@
       updateFullscreenSlide();
       setTimeout(() => (isFullscreenSliding = false), 500);
     }
-
     function prevFullscreen() {
       if (isFullscreenSliding) return;
       isFullscreenSliding = true;
@@ -386,28 +419,30 @@
       updateFullscreenSlide();
       setTimeout(() => (isFullscreenSliding = false), 500);
     }
-
     function closeFullscreen() {
       overlay.style.display = "none";
       header.classList.remove("hidden");
     }
 
+    // Eventos
     window.addEventListener("resize", () => {
+      if (overlay.style.display === "flex") {
+        updateFullscreenSize();
+        updateFullscreenSlide();
+      }
       showSlide(currentIndex);
-      updateFullscreenSlide();
     });
-
     window.addEventListener("load", () => {
       showSlide(currentIndex);
       updateFullscreenSlide();
     });
 
+    // Scroll wheel
     document.querySelector(".slider-container")?.addEventListener("wheel", (e) => {
       e.preventDefault();
       if (isSliding) return;
       e.deltaY > 0 ? nextSlide() : prevSlide();
     });
-
     document.querySelector(".fullscreen-container")?.addEventListener("wheel", (e) => {
       e.preventDefault();
       if (isFullscreenSliding) return;
