@@ -264,7 +264,7 @@
 </head>
 <body>
   <header id="header">
-    <div class="logo-container"><img src="img/favicon.webp" alt="Logo" draggable="false" /></div>
+    <div class="logo-container"><img src="img/logo.webp" alt="Logo" draggable="false" /></div>
     <div class="title">Dragon Ball Z - Budokai Tenkaichi 4 Texture Pack HD</div>
     <a href="https://www.youtube.com/@angel06-p7v" target="_blank" class="youtube-icon-link" aria-label="Visitar canal de YouTube"><img src="img/youtube-icon.webp" alt="YouTube" draggable="false" /></a>
   </header>
@@ -345,8 +345,7 @@
     }
     // Animación sin guardas internas, callers manejan el flag
     function animateSlide(currentImg, nextImg, direction, containerType) {
-      const animFlag = containerType==='slider'?'isAnimating':'isAnimatingFS';
-      // Se asume flag ya está puesto por el caller
+      const animFlag = containerType==='slider'? 'isAnimating' : 'isAnimatingFS';
       setNavEnabled(false);
       if (containerType==='slider') sliderImages.style.pointerEvents='none'; else fullscreenSlider.style.pointerEvents='none';
       currentImg.style.transition='transform 0.5s ease'; nextImg.style.transition='transform 0.5s ease';
@@ -357,7 +356,6 @@
       const cleanup=(e)=>{ if(e.target!==currentImg) return;
         currentImg.style.display='none'; currentImg.style.transition=''; currentImg.style.transform='translateX(0)';
         nextImg.style.transition='';
-        // liberar flag
         if (containerType==='slider') {
           isAnimating = false;
           sliderImages.style.pointerEvents='auto';
@@ -376,10 +374,8 @@
       const newIndex=(index+imageList.length)%imageList.length;
       if(newIndex===currentIndex) return;
       const currentImg=imgs[currentIndex], nextImg=imgs[newIndex];
-      // setear flag antes de animar
       isAnimating = true;
       if(currentImg.style.display==='none'){
-        // sin animación si es primer load
         imgs.forEach((img,i)=>img.style.display=i===newIndex?'block':'none');
         isAnimating = false;
         return;
@@ -400,7 +396,6 @@
     btnClose.addEventListener('click',e=>{e.stopPropagation(); closeFullscreen();});
     function closeFullscreen(){ overlay.style.display='none'; header.classList.remove('hidden'); }
     window.addEventListener('load',()=>{ const imgs=sliderImages.querySelectorAll('img'); imgs.forEach((img,i)=>img.style.display=i===currentIndex?'block':'none'); });
-    // Reconectar rueda con lógica unificada
     sliderContainer.addEventListener('wheel', e => {
       e.preventDefault(); e.stopPropagation();
       if(isAnimating) return;
