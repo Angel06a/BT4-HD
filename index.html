@@ -14,7 +14,6 @@
       background-color: #0d070d;
       font-family: Arial, sans-serif;
       color: white;
-      /* Desactivar selección globalmente si se desea, o en contenedores específicos */
     }
     body {
       display: flex;
@@ -249,7 +248,6 @@
       pointer-events: auto;
       user-select: none;
     }
-    /* Responsive adjustments */
     @media (max-aspect-ratio: 3/4) {
       .slider-container { width: 90vw; height: auto; aspect-ratio: 16 / 9; }
       .fullscreen-container { width: min(95vw, calc(95vh * 16 / 9)); aspect-ratio: 16 / 9; }
@@ -266,7 +264,7 @@
 </head>
 <body>
   <header id="header">
-    <div class="logo-container"><img src="img/logo.webp" alt="Logo" draggable="false" /></div>
+    <div class="logo-container"><img src="img/favicon.webp" alt="Logo" draggable="false" /></div>
     <div class="title">Dragon Ball Z - Budokai Tenkaichi 4 Texture Pack HD</div>
     <a href="https://www.youtube.com/@angel06-p7v" target="_blank" class="youtube-icon-link" aria-label="Visitar canal de YouTube"><img src="img/youtube-icon.webp" alt="YouTube" draggable="false" /></a>
   </header>
@@ -299,6 +297,8 @@
     const fullscreenSlider = document.getElementById("fullscreenSlider");
     const overlay = document.getElementById("fullscreenOverlay");
     const header = document.getElementById("header");
+    const sliderContainer = document.querySelector('.slider-container');
+    const fullscreenContainer = document.querySelector('.fullscreen-container');
     const btnPrev = document.querySelector('.slider-container .arrow.left');
     const btnNext = document.querySelector('.slider-container .arrow.right');
     const fsPrev = document.querySelector('.fullscreen-container .fullscreen-arrow.left');
@@ -343,10 +343,11 @@
         fullscreenSlider.appendChild(imgFull);
       });
     }
+    // Animación sin guardas internas, callers manejan el flag
     function animateSlide(currentImg, nextImg, direction, containerType) {
       const animFlag = containerType==='slider'?'isAnimating':'isAnimatingFS';
-      if (window[animFlag]) return;
-      window[animFlag] = true; setNavEnabled(false);
+      // Se asume flag ya está puesto por el caller
+      setNavEnabled(false);
       if (containerType==='slider') sliderImages.style.pointerEvents='none'; else fullscreenSlider.style.pointerEvents='none';
       currentImg.style.transition='transform 0.5s ease'; nextImg.style.transition='transform 0.5s ease';
       nextImg.style.display='block'; nextImg.style.transform=`translateX(${direction*100}%)`;
@@ -355,8 +356,16 @@
       nextImg.style.transform='translateX(0)';
       const cleanup=(e)=>{ if(e.target!==currentImg) return;
         currentImg.style.display='none'; currentImg.style.transition=''; currentImg.style.transform='translateX(0)';
-        nextImg.style.transition=''; window[animFlag]=false; setNavEnabled(true);
-        if (containerType==='slider') sliderImages.style.pointerEvents='auto'; else fullscreenSlider.style.pointerEvents='auto';
+        nextImg.style.transition='';
+        // liberar flag
+        if (containerType==='slider') {
+          isAnimating = false;
+          sliderImages.style.pointerEvents='auto';
+        } else {
+          isAnimatingFS = false;
+          fullscreenSlider.style.pointerEvents='auto';
+        }
+        setNavEnabled(true);
         currentImg.removeEventListener('transitionend',cleanup);
       };
       currentImg.addEventListener('transitionend',cleanup);
@@ -367,28 +376,43 @@
       const newIndex=(index+imageList.length)%imageList.length;
       if(newIndex===currentIndex) return;
       const currentImg=imgs[currentIndex], nextImg=imgs[newIndex];
+      // setear flag antes de animar
+      isAnimating = true;
       if(currentImg.style.display==='none'){
+        // sin animación si es primer load
         imgs.forEach((img,i)=>img.style.display=i===newIndex?'block':'none');
-      } else {
-        const direction=(newIndex>currentIndex||(currentIndex===imageList.length-1&&newIndex===0))?1:-1;
-        animateSlide(currentImg,nextImg,direction,'slider');
+        isAnimating = false;
+        return;
       }
+      const direction=(newIndex>currentIndex||(currentIndex===imageList.length-1&&newIndex===0))?1:-1;
+      animateSlide(currentImg,nextImg,direction,'slider');
       currentIndex=newIndex;
     }
     btnNext.addEventListener('click',e=>{e.stopPropagation(); if(!isAnimating) showSlide(currentIndex+1);} );
     btnPrev.addEventListener('click',e=>{e.stopPropagation(); if(!isAnimating) showSlide(currentIndex-1);} );
-    function openFullscreen(index){ fullscreenIndex=index; overlay.style.display='flex'; header.classList.add('hidden');
+    function openFullscreen(index){ if(isAnimatingFS) return; fullscreenIndex=index; overlay.style.display='flex'; header.classList.add('hidden');
       const imgs=fullscreenSlider.querySelectorAll('img'); imgs.forEach((img,i)=>img.style.display=i===index?'block':'none');
     }
-    function nextFullscreen(){ if(isAnimatingFS||!imageList.length) return; const imgs=fullscreenSlider.querySelectorAll('img'); const currentImg=imgs[fullscreenIndex]; const newIndex=(fullscreenIndex+1)%imageList.length; const nextImg=imgs[newIndex]; animateSlide(currentImg,nextImg,1,'fullscreen'); fullscreenIndex=newIndex; }
-    function prevFullscreen(){ if(isAnimatingFS||!imageList.length) return; const imgs=fullscreenSlider.querySelectorAll('img'); const currentImg=imgs[fullscreenIndex]; const newIndex=(fullscreenIndex-1+imageList.length)%imageList.length; const nextImg=imgs[newIndex]; animateSlide(currentImg,nextImg,-1,'fullscreen'); fullscreenIndex=newIndex; }
-    fsNext.addEventListener('click',e=>{e.stopPropagation(); if(!isAnimatingFS) nextFullscreen();});
-    fsPrev.addEventListener('click',e=>{e.stopPropagation(); if(!isAnimatingFS) prevFullscreen();});
+    function nextFullscreen(){ if(isAnimatingFS||!imageList.length) return; const imgs=fullscreenSlider.querySelectorAll('img'); const currentImg=imgs[fullscreenIndex]; const newIndex=(fullscreenIndex+1)%imageList.length; const nextImg=imgs[newIndex]; isAnimatingFS = true; animateSlide(currentImg,nextImg,1,'fullscreen'); fullscreenIndex=newIndex; }
+    function prevFullscreen(){ if(isAnimatingFS||!imageList.length) return; const imgs=fullscreenSlider.querySelectorAll('img'); const currentImg=imgs[fullscreenIndex]; const newIndex=(fullscreenIndex-1+imageList.length)%imageList.length; const nextImg=imgs[newIndex]; isAnimatingFS = true; animateSlide(currentImg,nextImg,-1,'fullscreen'); fullscreenIndex=newIndex; }
+    fsNext.addEventListener('click',e=>{e.stopPropagation(); nextFullscreen();});
+    fsPrev.addEventListener('click',e=>{e.stopPropagation(); prevFullscreen();});
     btnClose.addEventListener('click',e=>{e.stopPropagation(); closeFullscreen();});
     function closeFullscreen(){ overlay.style.display='none'; header.classList.remove('hidden'); }
     window.addEventListener('load',()=>{ const imgs=sliderImages.querySelectorAll('img'); imgs.forEach((img,i)=>img.style.display=i===currentIndex?'block':'none'); });
-    document.querySelector('.slider-container').addEventListener('wheel',e=>{e.preventDefault(); if(e.deltaY>0) btnNext.click(); else btnPrev.click();});
-    document.querySelector('.fullscreen-container').addEventListener('wheel',e=>{e.preventDefault(); if(e.deltaY>0) fsNext.click(); else fsPrev.click();});
+    // Reconectar rueda con lógica unificada
+    sliderContainer.addEventListener('wheel', e => {
+      e.preventDefault(); e.stopPropagation();
+      if(isAnimating) return;
+      if(e.deltaY>0) showSlide(currentIndex+1);
+      else showSlide(currentIndex-1);
+    });
+    fullscreenContainer.addEventListener('wheel', e => {
+      e.preventDefault(); e.stopPropagation();
+      if(isAnimatingFS) return;
+      if(e.deltaY>0) nextFullscreen();
+      else prevFullscreen();
+    });
   </script>
 </body>
 </html>
