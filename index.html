@@ -15,6 +15,7 @@
       font-family: Arial, sans-serif;
       color: white;
     }
+
     body {
       display: flex;
       flex-direction: column;
@@ -22,6 +23,7 @@
       justify-content: flex-start;
       overflow-x: hidden;
     }
+
     header {
       position: fixed;
       top: 0;
@@ -38,15 +40,18 @@
       box-sizing: border-box;
       transition: opacity 0.3s ease;
     }
+
     header.hidden {
       opacity: 0;
       pointer-events: none;
     }
+
     .logo-container img {
       height: 30px;
       width: auto;
       cursor: pointer;
     }
+
     .title {
       flex-grow: 1;
       text-align: center;
@@ -54,12 +59,14 @@
       color: #ffa500;
       font-weight: bold;
     }
+
     .youtube-icon-link img {
       height: 30px;
       width: auto;
       cursor: pointer;
       display: block;
     }
+
     .youtube-icon-link {
       display: inline-block;
       text-decoration: none;
@@ -67,6 +74,7 @@
       border: none;
       padding: 0;
     }
+
     main {
       margin-top: 60px;
       width: 100%;
@@ -80,7 +88,7 @@
     .slider-container {
       position: relative;
       width: 45.45vw; /* 1/2.2 del ancho en modo 16:9 */
-      aspect-ratio: 16 / 9; /* Relación fija */
+      aspect-ratio: 16 / 9;
       overflow: hidden;
       border: 2px solid #ffa500;
       background-color: #222;
@@ -90,25 +98,20 @@
     /* Ajuste para móviles */
     @media (max-aspect-ratio: 3/4) {
       .slider-container {
-        width: 90vw; /* Casi todo el ancho en móviles */
-        margin: 0 auto;
+        width: 90vw;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
       }
     }
 
-    /* Media query adicional para pantallas horizontales no 16:9 */
-    @media (min-aspect-ratio: 4/3) and (min-width: 800px) {
-      .slider-container {
-        width: 45.45vw;
-        max-width: 800px;
-      }
-    }
-
-    /* Estilos para carrusel y fullscreen */
+    /* Carrusel de imágenes */
     .slider-images, .fullscreen-slider {
       display: flex;
       height: 100%;
       transition: transform 0.5s ease-in-out;
+      will-change: transform;
     }
+
     .slider-images img, .fullscreen-slider img {
       width: 100%;
       height: 100%;
@@ -132,9 +135,11 @@
       cursor: pointer;
       z-index: 2;
     }
+
     .arrow.left {
       left: 10px;
     }
+
     .arrow.right {
       right: 10px;
     }
@@ -157,6 +162,8 @@
       font-size: 18px;
       flex-direction: column;
     }
+
+    /* Botones de descarga */
     .download-button {
       background-color: #ffd700;
       border: none;
@@ -169,11 +176,12 @@
       transition: background-color 0.3s ease;
       margin: 4px 6px;
     }
+
     .download-button:hover {
       background-color: #ffcc00;
     }
 
-    /* Marco de pantalla completa */
+    /* Pantalla completa */
     .fullscreen-overlay {
       position: fixed;
       top: 0;
@@ -186,12 +194,14 @@
       justify-content: center;
       z-index: 999;
     }
+
     .fullscreen-container {
       position: relative;
       aspect-ratio: 16 / 9;
       border: 4px solid #ffa500;
       overflow: hidden;
     }
+
     .fullscreen-arrow {
       position: absolute;
       top: 50%;
@@ -203,12 +213,15 @@
       cursor: pointer;
       z-index: 3;
     }
+
     .fullscreen-arrow.left {
       left: 10px;
     }
+
     .fullscreen-arrow.right {
       right: 10px;
     }
+
     .close-icon {
       position: absolute;
       top: 10px;
@@ -228,35 +241,43 @@
         width: 90vw;
         aspect-ratio: 16 / 9;
       }
+
       .fullscreen-container {
         width: 95vw;
         aspect-ratio: 16 / 9;
       }
+
       .title {
         font-size: 14px;
       }
+
       .download-container {
         width: 90vw;
         font-size: 16px;
         padding: 12px 16px;
       }
+
       .download-button {
         font-size: 13px;
         padding: 6px 10px;
       }
+
       header {
         height: 48px;
         padding: 0 12px;
       }
+
       .logo-container img,
       .youtube-icon-link img {
         height: 28px;
       }
+
       .arrow,
       .fullscreen-arrow {
         font-size: 24px;
         padding: 6px;
       }
+
       .close-icon {
         font-size: 24px;
         padding: 4px 8px;
@@ -274,6 +295,7 @@
       <img src="img/youtube-icon.webp" alt="YouTube" />
     </a>
   </header>
+
   <main>
     <div>
       <div class="slider-container">
@@ -287,6 +309,7 @@
       </div>
     </div>
   </main>
+
   <div class="fullscreen-overlay" id="fullscreenOverlay">
     <div class="fullscreen-container">
       <div class="fullscreen-arrow left" onclick="prevFullscreen()">&#10094;</div>
@@ -295,6 +318,7 @@
       <div class="fullscreen-slider" id="fullscreenSlider"></div>
     </div>
   </div>
+
   <!-- Scripts externos -->
   <script src="list.js"></script>
   <script src="img.js"></script>
@@ -305,7 +329,7 @@
     const overlay = document.getElementById("fullscreenOverlay");
     const header = document.getElementById("header");
 
-    // Procesar descargas desde list.js
+    // Cargar descargas desde list.js
     if (typeof listData !== 'undefined') {
       const lines = listData.trim().split('\n').filter(Boolean);
       lines.forEach(line => {
@@ -351,10 +375,10 @@
       });
     }
 
-    // Funciones de navegación
     function getSlideWidth() {
       return sliderImages.children[0]?.offsetWidth || 0;
     }
+
     function showSlide(index) {
       currentIndex = (index + imageList.length) % imageList.length;
       const slideWidth = getSlideWidth();
@@ -364,12 +388,14 @@
         }
       });
     }
+
     function nextSlide() {
       if (isSliding) return;
       isSliding = true;
       showSlide(currentIndex + 1);
       setTimeout(() => (isSliding = false), 500);
     }
+
     function prevSlide() {
       if (isSliding) return;
       isSliding = true;
@@ -377,7 +403,27 @@
       setTimeout(() => (isSliding = false), 500);
     }
 
-    // Funciones de pantalla completa
+    function getFullscreenWidth() {
+      return fullscreenSlider.children[0]?.offsetWidth || 0;
+    }
+
+    function updateFullscreenSlide() {
+      const slideWidth = getFullscreenWidth();
+      requestAnimationFrame(() => {
+        if (slideWidth > 0) {
+          fullscreenSlider.style.transform = `translateX(-${fullscreenIndex * slideWidth}px)`;
+        }
+      });
+    }
+
+    function openFullscreen(index) {
+      fullscreenIndex = index;
+      overlay.style.display = "flex";
+      header.classList.add("hidden");
+      updateFullscreenSize();
+      updateFullscreenSlide();
+    }
+
     function updateFullscreenSize() {
       const container = document.querySelector(".fullscreen-container");
       const vw = window.innerWidth;
@@ -387,44 +433,12 @@
       container.style.width = `${desiredWidth}px`;
       container.style.height = `${desiredHeight}px`;
     }
-    function openFullscreen(index) {
-      fullscreenIndex = index;
-      overlay.style.display = "flex";
-      header.classList.add("hidden");
-      updateFullscreenSize();
-      updateFullscreenSlide();
-    }
-    function getFullscreenWidth() {
-      return fullscreenSlider.children[0]?.offsetWidth || 0;
-    }
-    function updateFullscreenSlide() {
-      const slideWidth = getFullscreenWidth();
-      requestAnimationFrame(() => {
-        if (slideWidth > 0) {
-          fullscreenSlider.style.transform = `translateX(-${fullscreenIndex * slideWidth}px)`;
-        }
-      });
-    }
-    function nextFullscreen() {
-      if (isFullscreenSliding) return;
-      isFullscreenSliding = true;
-      fullscreenIndex = (fullscreenIndex + 1) % imageList.length;
-      updateFullscreenSlide();
-      setTimeout(() => (isFullscreenSliding = false), 500);
-    }
-    function prevFullscreen() {
-      if (isFullscreenSliding) return;
-      isFullscreenSliding = true;
-      fullscreenIndex = (fullscreenIndex - 1 + imageList.length) % imageList.length;
-      updateFullscreenSlide();
-      setTimeout(() => (isFullscreenSliding = false), 500);
-    }
+
     function closeFullscreen() {
       overlay.style.display = "none";
       header.classList.remove("hidden");
     }
 
-    // Eventos
     window.addEventListener("resize", () => {
       if (overlay.style.display === "flex") {
         updateFullscreenSize();
@@ -432,17 +446,18 @@
       }
       showSlide(currentIndex);
     });
+
     window.addEventListener("load", () => {
       showSlide(currentIndex);
       updateFullscreenSlide();
     });
 
-    // Scroll wheel
     document.querySelector(".slider-container")?.addEventListener("wheel", (e) => {
       e.preventDefault();
       if (isSliding) return;
       e.deltaY > 0 ? nextSlide() : prevSlide();
     });
+
     document.querySelector(".fullscreen-container")?.addEventListener("wheel", (e) => {
       e.preventDefault();
       if (isFullscreenSliding) return;
