@@ -14,6 +14,7 @@
       background-color: #0d070d;
       font-family: Arial, sans-serif;
       color: white;
+      user-select: none;
     }
     body {
       display: flex;
@@ -37,7 +38,6 @@
       z-index: 1000;
       box-sizing: border-box;
       transition: opacity 0.3s ease;
-      user-select: none;
     }
     header.hidden {
       opacity: 0;
@@ -86,12 +86,13 @@
       position: relative;
       width: 50vw;
       max-width: 800px;
-      aspect-ratio: 16 / 9;
+      aspect-ratio: 16/9;
       overflow: hidden;
       border: 2px solid #ffa500;
       background-color: #222;
       margin: 0 auto;
       user-select: none;
+      z-index: 1;
     }
     .slider-images {
       position: relative;
@@ -123,34 +124,73 @@
       justify-content: center;
       font-size: 24px;
       color: white;
-      background-color: rgba(0, 0, 0, 0.5);
+      background-color: rgba(0,0,0,0.5);
       cursor: pointer;
-      z-index: 5;
+      z-index: 2;
       user-select: none;
       pointer-events: auto;
     }
-    .arrow.left {
-      left: 10px;
-    }
-    .arrow.right {
-      right: 10px;
-    }
-    .download-container {
-      margin-top: 20px;
-      padding: 16px 24px;
-      border: 2px solid #ffa500;
-      border-radius: 8px;
+    .arrow.left { left: 10px; }
+    .arrow.right { right: 10px; }
+    /* Descargas con pestañas mejoradas */
+    .download-tabs {
+      position: relative;
       width: 70vw;
       max-width: 800px;
+      margin-top: 20px;
       background-color: #222;
+      border: 2px solid #ffa500;
+      border-radius: 8px;
       box-sizing: border-box;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
       color: #ffd700;
-      font-weight: bold;
       font-size: 18px;
-      flex-direction: column;
+      z-index: 1;
+      overflow: hidden;
+    }
+    .tab-buttons {
+      display: flex;
+      background: #333;
+      border-bottom: 2px solid #ffa500;
+      position: relative;
+      z-index: 2;
+    }
+    .tab-buttons button {
+      flex: 1;
+      background: #333;
+      border: none;
+      padding: 10px;
+      color: #ddd;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+      position: relative;
+      z-index: 2;
+      white-space: normal;
+    }
+    .tab-buttons button:not(:last-child) {
+      border-right: 1px solid #444;
+    }
+    .tab-buttons button.active {
+      background: #222;
+      color: #fff;
+      border-left: 2px solid #ffa500;
+      border-right: 2px solid #ffa500;
+      margin-bottom: -2px;
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+      z-index: 3;
+      white-space: normal;
+    }
+    .tab-buttons button:first-child.active { margin-left: -2px; }
+    .tab-buttons button:last-child.active { margin-right: -2px; }
+    .tab-content-container {
+      background: #222;
+      padding: 16px;
+      display: none;
+      z-index: 1;
+    }
+    .tab-content-container.active {
+      display: block;
     }
     .download-button {
       background-color: #ffd700;
@@ -162,10 +202,20 @@
       color: black;
       font-weight: normal;
       transition: background-color 0.3s ease;
-      margin: 4px 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin: 4px 8px; /* separación vertical y horizontal */
+      white-space: normal;
     }
-    .download-button:hover {
-      background-color: #ffcc00;
+    .download-button:hover { background-color: #ffcc00; }
+    .download-button img { height: 16px; width: 16px; }
+    @media (max-aspect-ratio: 3/4) {
+      .slider-container { width: 90vw; aspect-ratio: 16/9; }
+      .download-tabs { width: 90vw; }
+      header { height: 48px; padding: 0 12px; }
+      .logo-container img, .youtube-icon-link img { height: 28px; }
+      .arrow { width: 36px; height: 36px; font-size: 20px; }
     }
     .fullscreen-overlay {
       position: fixed;
@@ -173,26 +223,27 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background-color: rgba(0, 0, 0, 0.95);
+      background-color: rgba(0,0,0,0.95);
       display: none;
       align-items: center;
       justify-content: center;
-      z-index: 999;
+      z-index: 2000;
     }
     .fullscreen-container {
       position: relative;
-      width: min(90vw, calc(90vh * 16 / 9));
-      aspect-ratio: 16 / 9;
+      width: min(90vw, calc(90vh * 16/9));
+      aspect-ratio: 16/9;
       max-width: 1000px;
       border: 4px solid #ffa500;
       overflow: hidden;
       user-select: none;
+      background: #000;
+      border-radius: 8px;
     }
     .fullscreen-slider {
       position: relative;
       width: 100%;
       height: 100%;
-      user-select: none;
     }
     .fullscreen-slider img {
       position: absolute;
@@ -218,18 +269,14 @@
       justify-content: center;
       font-size: 28px;
       color: white;
-      background-color: rgba(0, 0, 0, 0.5);
+      background-color: rgba(0,0,0,0.5);
       cursor: pointer;
-      z-index: 5;
+      z-index: 2;
       user-select: none;
       pointer-events: auto;
     }
-    .fullscreen-arrow.left {
-      left: 10px;
-    }
-    .fullscreen-arrow.right {
-      right: 10px;
-    }
+    .fullscreen-arrow.left { left: 10px; }
+    .fullscreen-arrow.right { right: 10px; }
     .close-icon {
       position: absolute;
       top: 10px;
@@ -238,27 +285,15 @@
       height: 40px;
       font-size: 24px;
       color: white;
-      background-color: rgba(0, 0, 0, 0.5);
+      background-color: rgba(0,0,0,0.5);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      z-index: 5;
+      z-index: 2;
       border-radius: 50%;
       pointer-events: auto;
       user-select: none;
-    }
-    @media (max-aspect-ratio: 3/4) {
-      .slider-container { width: 90vw; height: auto; aspect-ratio: 16 / 9; }
-      .fullscreen-container { width: min(95vw, calc(95vh * 16 / 9)); aspect-ratio: 16 / 9; }
-      .title { font-size: 14px; }
-      .download-container { width: 90vw; font-size: 16px; padding: 12px 16px; }
-      .download-button { font-size: 13px; padding: 6px 10px; }
-      header { height: 48px; padding: 0 12px; }
-      .logo-container img, .youtube-icon-link img { height: 28px; }
-      .arrow { width: 36px; height: 36px; font-size: 20px; }
-      .fullscreen-arrow { width: 40px; height: 40px; font-size: 22px; }
-      .close-icon { width: 36px; height: 36px; font-size: 20px; }
     }
   </style>
 </head>
@@ -275,9 +310,9 @@
         <div class="arrow right">&#10095;</div>
         <div class="slider-images" id="sliderImages"></div>
       </div>
-      <div class="download-container">
-        <div class="download-title">Descargas:</div>
-        <div id="downloadContainer" class="download-buttons"></div>
+      <div class="download-tabs" id="downloadTabs">
+        <div class="tab-buttons" id="tabButtons"></div>
+        <div class="tab-contents" id="tabContents"></div>
       </div>
     </div>
   </main>
@@ -292,7 +327,6 @@
   <script src="list.js"></script>
   <script src="img.js"></script>
   <script>
-    const downloadContainer = document.getElementById("downloadContainer");
     const sliderImages = document.getElementById("sliderImages");
     const fullscreenSlider = document.getElementById("fullscreenSlider");
     const overlay = document.getElementById("fullscreenOverlay");
@@ -304,6 +338,8 @@
     const fsPrev = document.querySelector('.fullscreen-container .fullscreen-arrow.left');
     const fsNext = document.querySelector('.fullscreen-container .fullscreen-arrow.right');
     const btnClose = document.querySelector('.fullscreen-container .close-icon');
+    const tabButtons = document.getElementById('tabButtons');
+    const tabContents = document.getElementById('tabContents');
     let currentIndex = 0;
     let fullscreenIndex = 0;
     let imageList = [];
@@ -320,94 +356,92 @@
     function preloadImages(names) {
       names.forEach(name => { const img = new Image(); img.src = `img/${name}`; });
     }
-    if (typeof listData !== 'undefined') {
-      listData.trim().split("\n").filter(Boolean).forEach(line => {
-        const match = line.match(/-(.*?)\s+"(.*?)"/);
-        if (match) {
-          const name = match[1].trim(); const url = match[2].trim();
-          const btn = document.createElement("button"); btn.className = "download-button"; btn.textContent = name;
-          btn.onclick = () => window.open(url, "_blank"); downloadContainer.appendChild(btn);
+    function buildDownloadTabs() {
+      if (typeof listData === 'undefined') return;
+      const lines = listData.trim().split('\n');
+      const sections = {};
+      let currentSection = null;
+      lines.forEach(raw => {
+        const line = raw.trim(); if (!line) return;
+        if (line.endsWith(':')) { currentSection = line.slice(0,-1).trim(); if (currentSection) sections[currentSection]=[]; }
+        else if (line.startsWith('-') && currentSection) {
+          const match = line.slice(1).trim().match(/^(.*?)\s+"([^"]+)"$/);
+          if (match) sections[currentSection].push({ name: match[1].trim(), url: match[2].trim() });
         }
       });
+      let first=true;
+      for (const [section, items] of Object.entries(sections)) {
+        const btn=document.createElement('button'); btn.textContent=section;
+        if(first) btn.classList.add('active');
+        const contentDiv=document.createElement('div'); contentDiv.classList.add('tab-content-container');
+        if(first) contentDiv.classList.add('active');
+        items.forEach(item=>{
+          const dlBtn=document.createElement('button'); dlBtn.className='download-button'; dlBtn.textContent=item.name;
+          dlBtn.addEventListener('click',e=>{e.stopPropagation(); window.open(item.url,'_blank');});
+          dlBtn.addEventListener('auxclick', e => { if(e.button===1){ e.stopPropagation(); window.open(item.url, '_blank'); }});
+          contentDiv.appendChild(dlBtn);
+        });
+        btn.addEventListener('click',()=>{
+          document.querySelectorAll('#tabButtons button').forEach(b=>b.classList.remove('active'));
+          document.querySelectorAll('#tabContents .tab-content-container').forEach(c=>c.classList.remove('active'));
+          btn.classList.add('active'); contentDiv.classList.add('active');
+        });
+        tabButtons.appendChild(btn);
+        tabContents.appendChild(contentDiv);
+        first=false;
+      }
     }
-    if (typeof imgData !== 'undefined') {
-      imageList = imgData.trim().split("\n").filter(Boolean).map(line => line.replace(/^-/, "").trim());
-      preloadImages(imageList);
-      imageList.forEach((imgName, index) => {
-        const img = document.createElement("img"); img.src = `img/${imgName}`; img.alt = `Imagen ${index+1}`; img.loading = "eager"; img.draggable = false;
-        img.addEventListener('dragstart', e => e.preventDefault());
-        img.addEventListener('click', e => { e.stopPropagation(); if (!isAnimatingFS) openFullscreen(index); });
+    if(typeof listData!=='undefined') buildDownloadTabs();
+    if(typeof imgData!=='undefined'){
+      imageList=imgData.trim().split('\n').filter(Boolean).map(l=>l.replace(/^-/,"")); preloadImages(imageList);
+      imageList.forEach((imgName,index)=>{
+        const img=document.createElement('img'); img.src=`img/${imgName}`; img.alt=`Imagen ${index+1}`; img.loading='eager'; img.draggable=false;
+        img.addEventListener('dragstart',e=>e.preventDefault()); img.addEventListener('click',e=>{e.stopPropagation(); if(!isAnimatingFS) openFullscreen(index);});
         sliderImages.appendChild(img);
-        const imgFull = document.createElement("img"); imgFull.src = `img/${imgName}`; imgFull.alt = `Imagen ${index+1}`; imgFull.loading = "eager"; imgFull.draggable = false;
-        imgFull.addEventListener('dragstart', e => e.preventDefault());
-        fullscreenSlider.appendChild(imgFull);
+        const imgFull=document.createElement('img'); imgFull.src=`img/${imgName}`; imgFull.alt=`Imagen ${index+1}`; imgFull.loading='eager'; imgFull.draggable=false;
+        imgFull.addEventListener('dragstart',e=>e.preventDefault()); fullscreenSlider.appendChild(imgFull);
       });
     }
-    // Animación sin guardas internas, callers manejan el flag
-    function animateSlide(currentImg, nextImg, direction, containerType) {
-      const animFlag = containerType==='slider'? 'isAnimating' : 'isAnimatingFS';
+    function animateSlide(currentImg,nextImg,direction,containerType){
       setNavEnabled(false);
-      if (containerType==='slider') sliderImages.style.pointerEvents='none'; else fullscreenSlider.style.pointerEvents='none';
+      if(containerType==='slider') sliderImages.style.pointerEvents='none'; else fullscreenSlider.style.pointerEvents='none';
       currentImg.style.transition='transform 0.5s ease'; nextImg.style.transition='transform 0.5s ease';
       nextImg.style.display='block'; nextImg.style.transform=`translateX(${direction*100}%)`;
-      void nextImg.offsetWidth;
-      currentImg.style.transform=`translateX(${-direction*100}%)`;
-      nextImg.style.transform='translateX(0)';
-      const cleanup=(e)=>{ if(e.target!==currentImg) return;
-        currentImg.style.display='none'; currentImg.style.transition=''; currentImg.style.transform='translateX(0)';
-        nextImg.style.transition='';
-        if (containerType==='slider') {
-          isAnimating = false;
-          sliderImages.style.pointerEvents='auto';
-        } else {
-          isAnimatingFS = false;
-          fullscreenSlider.style.pointerEvents='auto';
-        }
-        setNavEnabled(true);
-        currentImg.removeEventListener('transitionend',cleanup);
+      void nextImg.offsetWidth; currentImg.style.transform=`translateX(${-direction*100}%)`; nextImg.style.transform='translateX(0)';
+      const cleanup=e=>{ if(e.target!==currentImg) return;
+        currentImg.style.display='none'; currentImg.style.transition=''; currentImg.style.transform='translateX(0)'; nextImg.style.transition='';
+        if(containerType==='slider'){ isAnimating=false; sliderImages.style.pointerEvents='auto'; }
+        else{ isAnimatingFS=false; fullscreenSlider.style.pointerEvents='auto'; }
+        setNavEnabled(true); currentImg.removeEventListener('transitionend',cleanup);
       };
       currentImg.addEventListener('transitionend',cleanup);
     }
-    function showSlide(index) {
-      if(!imageList.length||isAnimating) return;
-      const imgs=sliderImages.querySelectorAll('img');
-      const newIndex=(index+imageList.length)%imageList.length;
-      if(newIndex===currentIndex) return;
-      const currentImg=imgs[currentIndex], nextImg=imgs[newIndex];
-      isAnimating = true;
+    function showSlide(index){ if(!imageList.length||isAnimating) return; const imgs=sliderImages.querySelectorAll('img'); const last=imageList.length-1;
+      let newIndex=(index+imageList.length)%imageList.length; if(newIndex===currentIndex) return;
+      const currentImg=imgs[currentIndex], nextImg=imgs[newIndex]; isAnimating=true;
       if(currentImg.style.display==='none'){
-        imgs.forEach((img,i)=>img.style.display=i===newIndex?'block':'none');
-        isAnimating = false;
-        return;
+        imgs.forEach((img,i)=>img.style.display=i===newIndex?'block':'none'); isAnimating=false; currentIndex=newIndex; return;
       }
-      const direction=(newIndex>currentIndex||(currentIndex===imageList.length-1&&newIndex===0))?1:-1;
-      animateSlide(currentImg,nextImg,direction,'slider');
-      currentIndex=newIndex;
+      let direction;
+      if(currentIndex===0 && newIndex===last) direction=-1;
+      else if(currentIndex===last && newIndex===0) direction=1;
+      else if(newIndex>currentIndex) direction=1;
+      else direction=-1;
+      animateSlide(currentImg,nextImg,direction,'slider'); currentIndex=newIndex;
     }
     btnNext.addEventListener('click',e=>{e.stopPropagation(); if(!isAnimating) showSlide(currentIndex+1);} );
     btnPrev.addEventListener('click',e=>{e.stopPropagation(); if(!isAnimating) showSlide(currentIndex-1);} );
     function openFullscreen(index){ if(isAnimatingFS) return; fullscreenIndex=index; overlay.style.display='flex'; header.classList.add('hidden');
       const imgs=fullscreenSlider.querySelectorAll('img'); imgs.forEach((img,i)=>img.style.display=i===index?'block':'none');
     }
-    function nextFullscreen(){ if(isAnimatingFS||!imageList.length) return; const imgs=fullscreenSlider.querySelectorAll('img'); const currentImg=imgs[fullscreenIndex]; const newIndex=(fullscreenIndex+1)%imageList.length; const nextImg=imgs[newIndex]; isAnimatingFS = true; animateSlide(currentImg,nextImg,1,'fullscreen'); fullscreenIndex=newIndex; }
-    function prevFullscreen(){ if(isAnimatingFS||!imageList.length) return; const imgs=fullscreenSlider.querySelectorAll('img'); const currentImg=imgs[fullscreenIndex]; const newIndex=(fullscreenIndex-1+imageList.length)%imageList.length; const nextImg=imgs[newIndex]; isAnimatingFS = true; animateSlide(currentImg,nextImg,-1,'fullscreen'); fullscreenIndex=newIndex; }
+    function nextFullscreen(){ if(isAnimatingFS||!imageList.length) return; const imgs=fullscreenSlider.querySelectorAll('img'); const currentImg=imgs[fullscreenIndex]; const newIndex=(fullscreenIndex+1)%imageList.length; const nextImg=imgs[newIndex]; isAnimatingFS=true; animateSlide(currentImg,nextImg,1,'fullscreen'); fullscreenIndex=newIndex; }
+    function prevFullscreen(){ if(isAnimatingFS||!imageList.length) return; const imgs=fullscreenSlider.querySelectorAll('img'); const currentImg=imgs[fullscreenIndex]; const newIndex=(fullscreenIndex-1+imageList.length)%imageList.length; const nextImg=imgs[newIndex]; isAnimatingFS=true; animateSlide(currentImg,nextImg,-1,'fullscreen'); fullscreenIndex=newIndex; }
     fsNext.addEventListener('click',e=>{e.stopPropagation(); nextFullscreen();});
     fsPrev.addEventListener('click',e=>{e.stopPropagation(); prevFullscreen();});
-    btnClose.addEventListener('click',e=>{e.stopPropagation(); closeFullscreen();});
-    function closeFullscreen(){ overlay.style.display='none'; header.classList.remove('hidden'); }
+    btnClose.addEventListener('click',e=>{e.stopPropagation(); overlay.style.display='none'; header.classList.remove('hidden');});
     window.addEventListener('load',()=>{ const imgs=sliderImages.querySelectorAll('img'); imgs.forEach((img,i)=>img.style.display=i===currentIndex?'block':'none'); });
-    sliderContainer.addEventListener('wheel', e => {
-      e.preventDefault(); e.stopPropagation();
-      if(isAnimating) return;
-      if(e.deltaY>0) showSlide(currentIndex+1);
-      else showSlide(currentIndex-1);
-    });
-    fullscreenContainer.addEventListener('wheel', e => {
-      e.preventDefault(); e.stopPropagation();
-      if(isAnimatingFS) return;
-      if(e.deltaY>0) nextFullscreen();
-      else prevFullscreen();
-    });
+    sliderContainer.addEventListener('wheel',e=>{ e.preventDefault(); e.stopPropagation(); if(isAnimating) return; if(e.deltaY>0) showSlide(currentIndex+1); else showSlide(currentIndex-1); });
+    fullscreenContainer.addEventListener('wheel',e=>{ e.preventDefault(); e.stopPropagation(); if(isAnimatingFS) return; if(e.deltaY>0) nextFullscreen(); else prevFullscreen(); });
   </script>
 </body>
 </html>
