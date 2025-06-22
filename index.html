@@ -132,7 +132,6 @@
     }
     .arrow.left { left: 10px; }
     .arrow.right { right: 10px; }
-    /* Descargas con pestañas mejoradas */
     .download-tabs {
       position: relative;
       width: 70vw;
@@ -205,12 +204,12 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      margin: 4px 8px; /* separación vertical y horizontal */
+      margin: 4px 8px;
+      text-decoration: none;
       white-space: normal;
     }
     .download-button:hover { background-color: #ffcc00; }
     .download-button img { height: 16px; width: 16px; }
-    /* Contenedor de videos de YouTube */
     .youtube-container {
       position: relative;
       width: 70vw;
@@ -230,6 +229,7 @@
       width: 100%;
       aspect-ratio: 16/9;
       border: none;
+      loading: lazy;
     }
     @media (max-aspect-ratio: 3/4) {
       .slider-container { width: 90vw; aspect-ratio: 16/9; }
@@ -336,10 +336,7 @@
         <div class="tab-buttons" id="tabButtons"></div>
         <div class="tab-contents" id="tabContents"></div>
       </div>
-      <!-- Contenedor para videos de YouTube -->
-      <div class="youtube-container" id="youtubeContainer" style="display: none;">
-        <!-- Iframes se agregarán dinámicamente aquí -->
-      </div>
+      <div class="youtube-container" id="youtubeContainer" style="display: none;"></div>
     </div>
   </main>
   <div class="fullscreen-overlay" id="fullscreenOverlay">
@@ -407,10 +404,13 @@
         const contentDiv=document.createElement('div'); contentDiv.classList.add('tab-content-container');
         if(first) contentDiv.classList.add('active');
         items.forEach(item=>{
-          const dlBtn=document.createElement('button'); dlBtn.className='download-button'; dlBtn.textContent=item.name;
-          dlBtn.addEventListener('click',e=>{e.stopPropagation(); window.open(item.url,'_blank');});
-          dlBtn.addEventListener('auxclick', e => { if(e.button===1){ e.stopPropagation(); window.open(item.url, '_blank'); }});
-          contentDiv.appendChild(dlBtn);
+          const dlLink=document.createElement('a');
+          dlLink.className='download-button';
+          dlLink.textContent=item.name;
+          dlLink.href=item.url;
+          dlLink.target='_blank';
+          dlLink.rel='noopener noreferrer';
+          contentDiv.appendChild(dlLink);
         });
         btn.addEventListener('click',()=>{
           document.querySelectorAll('#tabButtons button').forEach(b=>b.classList.remove('active'));
@@ -452,12 +452,12 @@
           if (videoId) {
             const iframe = document.createElement('iframe');
             iframe.className = 'youtube-embed';
-            // Agregar parámetro origin para evitar errores de Referer. Asegúrate de servir la página vía HTTP(S), no file://
             let src = `https://www.youtube.com/embed/${videoId}`;
             if (location.protocol.startsWith('http')) {
               src += `?origin=${encodeURIComponent(location.origin)}`;
             }
             iframe.src = src;
+            iframe.loading = 'lazy';
             iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
             iframe.allowFullscreen = true;
             youtubeContainer.appendChild(iframe);
@@ -465,18 +465,26 @@
         });
       }
     }
-    if(typeof listData!=='undefined') {
-      buildDownloadTabs();
+    window.addEventListener('load', ()=>{
+      if(typeof listData!=='undefined') buildDownloadTabs();
+      if(typeof imgData!=='undefined'){
+        imageList=imgData.trim().split('\n').filter(Boolean).map(l=>l.replace(/^-/,"")); preloadImages(imageList);
+        imageList.forEach((imgName,index)=>{
+          const img=document.createElement('img'); img.src=`img/${imgName}`; img.alt=`Imagen ${index+1}`; img.loading='eager'; img.draggable=false;
+          img.addEventListener('dragstart',e=>e.preventDefault()); img.addEventListener('click',e=>{e.stopPropagation(); if(!isAnimatingFS) openFullscreen(index);});
+          sliderImages.appendChild(img);
+          const imgFull=document.createElement('img'); imgFull.src=`img/${imgName}`; imgFull.alt=`Imagen ${index+1}`; imgFull.loading='eager'; imgFull.draggable=false;
+          imgFull.addEventListener('dragstart',e=>e.preventDefault()); fullscreenSlider.appendChild(imgFull);
+        });
+        const imgs=sliderImages.querySelectorAll('img'); imgs.forEach((img,i)=>img.style.display=i===currentIndex?'block':'none');
+      }
+      // Después de cargar imágenes, insertar YouTube embeds
       buildYouTubeEmbeds();
-    }
-    if(typeof imgData!=='undefined'){
-      imageList=imgData.trim().split('\n').filter(Boolean).map(l=>l.replace(/^-/,"")); preloadImages(imageList);
-      imageList.forEach((imgName,index)=>{
-        const img=document.createElement('img'); img.src=`img/${imgName}`; img.alt=`Imagen ${index+1}`; img.loading='eager'; img.draggable=false;
-        img.addEventListener('dragstart',e=>e.preventDefault()); img.addEventListener('click',e=>{e.stopPropagation(); if(!isAnimatingFS) openFullscreen(index);});
-        sliderImages.appendChild(img);
-        const imgFull=document.createElement('img'); imgFull.src=`img/${imgName}`; imgFull.alt=`Imagen ${index+1}`; imgFull.loading='eager'; imgFull.draggable=false;
-        imgFull.addEventListener('dragstart',e=>e.preventDefault()); fullscreenSlider.appendChild(imgFull);
+    });
+    if(typeof imgData==='undefined'){
+      // En caso de no usar listData/imgData, aún inicializar slider
+      window.addEventListener('load', ()=>{
+        const imgs=sliderImages.querySelectorAll('img'); imgs.forEach((img,i)=>img.style.display=i===currentIndex?'block':'none');
       });
     }
     function animateSlide(currentImg,nextImg,direction,containerType){
@@ -516,7 +524,6 @@
     fsNext.addEventListener('click',e=>{e.stopPropagation(); nextFullscreen();});
     fsPrev.addEventListener('click',e=>{e.stopPropagation(); prevFullscreen();});
     btnClose.addEventListener('click',e=>{e.stopPropagation(); overlay.style.display='none'; header.classList.remove('hidden');});
-    window.addEventListener('load',()=>{ const imgs=sliderImages.querySelectorAll('img'); imgs.forEach((img,i)=>img.style.display=i===currentIndex?'block':'none'); });
     sliderContainer.addEventListener('wheel',e=>{ e.preventDefault(); e.stopPropagation(); if(isAnimating) return; if(e.deltaY>0) showSlide(currentIndex+1); else showSlide(currentIndex-1); });
     fullscreenContainer.addEventListener('wheel',e=>{ e.preventDefault(); e.stopPropagation(); if(isAnimatingFS) return; if(e.deltaY>0) nextFullscreen(); else prevFullscreen(); });
   </script>
