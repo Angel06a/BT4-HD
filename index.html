@@ -210,9 +210,31 @@
     }
     .download-button:hover { background-color: #ffcc00; }
     .download-button img { height: 16px; width: 16px; }
+    /* Contenedor de videos de YouTube */
+    .youtube-container {
+      position: relative;
+      width: 70vw;
+      max-width: 800px;
+      margin-top: 20px;
+      background-color: #222;
+      border: 2px solid #ffa500;
+      border-radius: 8px;
+      padding: 16px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .youtube-embed {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border: none;
+    }
     @media (max-aspect-ratio: 3/4) {
       .slider-container { width: 90vw; aspect-ratio: 16/9; }
       .download-tabs { width: 90vw; }
+      .youtube-container { width: 90vw; }
       header { height: 48px; padding: 0 12px; }
       .logo-container img, .youtube-icon-link img { height: 28px; }
       .arrow { width: 36px; height: 36px; font-size: 20px; }
@@ -314,6 +336,10 @@
         <div class="tab-buttons" id="tabButtons"></div>
         <div class="tab-contents" id="tabContents"></div>
       </div>
+      <!-- Contenedor para videos de YouTube -->
+      <div class="youtube-container" id="youtubeContainer" style="display: none;">
+        <!-- Iframes se agregarán dinámicamente aquí -->
+      </div>
     </div>
   </main>
   <div class="fullscreen-overlay" id="fullscreenOverlay">
@@ -340,6 +366,7 @@
     const btnClose = document.querySelector('.fullscreen-container .close-icon');
     const tabButtons = document.getElementById('tabButtons');
     const tabContents = document.getElementById('tabContents');
+    const youtubeContainer = document.getElementById('youtubeContainer');
     let currentIndex = 0;
     let fullscreenIndex = 0;
     let imageList = [];
@@ -363,7 +390,10 @@
       let currentSection = null;
       lines.forEach(raw => {
         const line = raw.trim(); if (!line) return;
-        if (line.endsWith(':')) { currentSection = line.slice(0,-1).trim(); if (currentSection) sections[currentSection]=[]; }
+        if (line.endsWith(':')) {
+          currentSection = line.slice(0,-1).trim();
+          if (currentSection) sections[currentSection] = [];
+        }
         else if (line.startsWith('-') && currentSection) {
           const match = line.slice(1).trim().match(/^(.*?)\s+"([^"]+)"$/);
           if (match) sections[currentSection].push({ name: match[1].trim(), url: match[2].trim() });
@@ -371,6 +401,7 @@
       });
       let first=true;
       for (const [section, items] of Object.entries(sections)) {
+        if (section.toLowerCase() === 'youtube') continue;
         const btn=document.createElement('button'); btn.textContent=section;
         if(first) btn.classList.add('active');
         const contentDiv=document.createElement('div'); contentDiv.classList.add('tab-content-container');
@@ -391,7 +422,53 @@
         first=false;
       }
     }
-    if(typeof listData!=='undefined') buildDownloadTabs();
+    function buildYouTubeEmbeds() {
+      if (typeof listData === 'undefined') return;
+      const lines = listData.trim().split('\n');
+      let currentSection = null;
+      const ytLinks = [];
+      lines.forEach(raw => {
+        const line = raw.trim(); if (!line) return;
+        if (line.endsWith(':')) {
+          currentSection = line.slice(0,-1).trim().toLowerCase();
+        } else if (line.startsWith('-') && currentSection === 'youtube') {
+          const link = line.slice(1).trim();
+          ytLinks.push(link);
+        }
+      });
+      if (ytLinks.length) {
+        youtubeContainer.style.display = 'flex';
+        ytLinks.forEach(link => {
+          let videoId = null;
+          try {
+            const url = new URL(link);
+            if (url.hostname.includes('youtube.com')) {
+              videoId = url.searchParams.get('v');
+            } else if (url.hostname === 'youtu.be') {
+              videoId = url.pathname.slice(1);
+            }
+          } catch(err) {
+          }
+          if (videoId) {
+            const iframe = document.createElement('iframe');
+            iframe.className = 'youtube-embed';
+            // Agregar parámetro origin para evitar errores de Referer. Asegúrate de servir la página vía HTTP(S), no file://
+            let src = `https://www.youtube.com/embed/${videoId}`;
+            if (location.protocol.startsWith('http')) {
+              src += `?origin=${encodeURIComponent(location.origin)}`;
+            }
+            iframe.src = src;
+            iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+            iframe.allowFullscreen = true;
+            youtubeContainer.appendChild(iframe);
+          }
+        });
+      }
+    }
+    if(typeof listData!=='undefined') {
+      buildDownloadTabs();
+      buildYouTubeEmbeds();
+    }
     if(typeof imgData!=='undefined'){
       imageList=imgData.trim().split('\n').filter(Boolean).map(l=>l.replace(/^-/,"")); preloadImages(imageList);
       imageList.forEach((imgName,index)=>{
