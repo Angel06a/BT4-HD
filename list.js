@@ -1,7 +1,7 @@
 // list.js
 const listData = `
 Texture Pack:
--Texture Pack HD v1.05 "https://www.mediafire.com/file/metbjkyo0jrmlaw/dbz_bt4_HD_v1.05.zip/file"
+-Avance Beta14 v1.05b "https://www.mediafire.com/file/jh8tn9lwez61011/%255BAvance_Beta14%255D_v1.05b.zip/file"
 -Texture Pack Lite v1.05 "https://www.mediafire.com/file/j1xz0ehe2am6235/dbz_bt4_Lite_v1.05.zip/file"
 Extra:
 -Installation explanation @ENG "https://github.com/Angel06a/BT4-HD/blob/main/README.md#%EF%B8%8Finstallation"
