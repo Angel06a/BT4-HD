@@ -6,21 +6,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/webp" href="img/favicon.webp" />
   <style>
+    :root {
+      --primary-color: #ffa500;
+      --accent-color: #ffd700;
+      --bg-dark: #0d070d;
+      --card-bg: #222222;
+      --header-bg: rgba(34, 34, 34, 0.85);
+      --border-radius: 8px;
+    }
+
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
-      height: 100%;
-      /* Fondo mosaico: imagen repetida en mosaico */
-      background-color: #0d070d;
+      min-height: 100%;
+      background-color: var(--bg-dark);
       background-image: url('img/fondo.webp');
       background-repeat: repeat;
-      /* Ajuste de tamaño del mosaico: cuadrados más grandes */
       background-size: 150px 150px;
       font-family: Arial, sans-serif;
       color: white;
       user-select: none;
+      -webkit-user-select: none;
     }
+
     body {
       display: flex;
       flex-direction: column;
@@ -28,41 +37,57 @@
       justify-content: flex-start;
       overflow-x: hidden;
     }
+
     header {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
-      height: 40px;
+      height: 48px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background-color: rgba(34,34,34,0.9);
-      border-bottom: 2px solid #ffa500;
+      background-color: var(--header-bg);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 2px solid var(--primary-color);
       padding: 0 20px;
       z-index: 1000;
       box-sizing: border-box;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     }
+
     header.hidden {
       opacity: 0;
+      transform: translateY(-100%);
       pointer-events: none;
     }
+
     .logo-container img {
-      height: 30px;
+      height: 32px;
       width: auto;
       cursor: pointer;
       user-select: none;
       -webkit-user-drag: none;
+      transition: transform 0.2s ease;
     }
+
+    .logo-container img:hover {
+      transform: scale(1.05);
+    }
+
     .title {
       flex-grow: 1;
       text-align: center;
       font-size: 16px;
-      color: #ffa500;
+      color: var(--primary-color);
       font-weight: bold;
       user-select: none;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+      padding: 0 10px;
     }
+
     .youtube-icon-link img {
       height: 30px;
       width: auto;
@@ -70,7 +95,13 @@
       display: block;
       user-select: none;
       -webkit-user-drag: none;
+      transition: transform 0.2s ease;
     }
+
+    .youtube-icon-link:hover img {
+      transform: scale(1.1);
+    }
+
     .youtube-icon-link {
       display: inline-block;
       text-decoration: none;
@@ -79,32 +110,39 @@
       padding: 0;
       user-select: none;
     }
+
     main {
-      margin-top: 60px;
+      margin-top: 68px;
+      margin-bottom: 40px;
       width: 100%;
       display: flex;
       justify-content: center;
       flex-direction: column;
       align-items: center;
     }
+
     .slider-container {
       position: relative;
       width: 50vw;
       max-width: 800px;
       aspect-ratio: 16/9;
       overflow: hidden;
-      border: 2px solid #ffa500;
-      background-color: #222;
+      border: 2px solid var(--primary-color);
+      background-color: var(--card-bg);
       margin: 0 auto;
       user-select: none;
       z-index: 1;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
     }
+
     .slider-images {
       position: relative;
       width: 100%;
       height: 100%;
       user-select: none;
     }
+
     .slider-images img {
       position: absolute;
       top: 0;
@@ -118,6 +156,7 @@
       user-select: none;
       -webkit-user-drag: none;
     }
+
     .arrow {
       position: absolute;
       top: 50%;
@@ -127,151 +166,241 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 20px;
       color: white;
-      background-color: rgba(0,0,0,0.5);
+      background-color: rgba(0, 0, 0, 0.6);
       cursor: pointer;
       z-index: 2;
       user-select: none;
       pointer-events: auto;
+      border-radius: 50%;
+      transition: background-color 0.2s ease, transform 0.2s ease;
     }
+
+    .arrow:hover {
+      background-color: rgba(255, 165, 0, 0.8);
+      color: #000;
+      transform: translateY(-50%) scale(1.1);
+    }
+
     .arrow.left { left: 10px; }
     .arrow.right { right: 10px; }
+
+    .dots-container {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 2;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .dot.active {
+      background-color: var(--primary-color);
+      transform: scale(1.2);
+    }
+
     .download-tabs {
       position: relative;
       width: 70vw;
       max-width: 800px;
       margin-top: 20px;
-      background-color: #222;
-      border: 2px solid #ffa500;
-      border-radius: 8px;
+      background-color: var(--card-bg);
+      border: 2px solid var(--primary-color);
+      border-radius: var(--border-radius);
       box-sizing: border-box;
-      color: #ffd700;
+      color: var(--accent-color);
       font-size: 18px;
       z-index: 1;
       overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
     }
+
     .tab-buttons {
       display: flex;
-      background: #333;
-      border-bottom: 2px solid #ffa500;
+      background: #333333;
+      border-bottom: 2px solid var(--primary-color);
       position: relative;
       z-index: 2;
+      overflow-x: auto;
     }
+
     .tab-buttons button {
       flex: 1;
-      background: #333;
+      background: #333333;
       border: none;
-      padding: 10px;
-      color: #ddd;
-      font-size: 16px;
+      padding: 12px;
+      color: #dddddd;
+      font-size: 15px;
+      font-weight: bold;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: background 0.3s, color 0.3s;
       position: relative;
       z-index: 2;
-      white-space: normal;
+      white-space: nowrap;
     }
+
     .tab-buttons button:not(:last-child) {
-      border-right: 1px solid #444;
+      border-right: 1px solid #444444;
     }
+
+    .tab-buttons button:hover {
+      background: #444444;
+      color: #ffffff;
+    }
+
     .tab-buttons button.active {
-      background: #222;
-      color: #fff;
-      border-left: 2px solid #ffa500;
-      border-right: 2px solid #ffa500;
+      background: var(--card-bg);
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--card-bg);
       margin-bottom: -2px;
-      border-top-left-radius: 6px;
-      border-top-right-radius: 6px;
       z-index: 3;
-      white-space: normal;
     }
-    .tab-buttons button:first-child.active { margin-left: -2px; }
-    .tab-buttons button:last-child.active { margin-right: -2px; }
+
     .tab-content-container {
-      background: #222;
+      background: var(--card-bg);
       padding: 16px;
       display: none;
       z-index: 1;
+      animation: fadeIn 0.3s ease-in-out;
     }
+
     .tab-content-container.active {
-      display: block;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
     }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .download-button {
-      background-color: #ffd700;
+      background-color: var(--accent-color);
       border: none;
-      padding: 8px 16px;
+      padding: 10px 18px;
       font-size: 14px;
       cursor: pointer;
       border-radius: 6px;
-      color: black;
-      font-weight: normal;
-      transition: background-color 0.3s ease;
+      color: #000000;
+      font-weight: bold;
+      transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      margin: 4px 8px;
+      gap: 8px;
       text-decoration: none;
       white-space: normal;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     }
-    .download-button:hover { background-color: #ffcc00; }
-    .download-button img { height: 16px; width: 16px; }
+
+    .download-button:hover {
+      background-color: #ffe033;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(255, 215, 0, 0.4);
+    }
+
+    .download-button img {
+      height: 16px;
+      width: 16px;
+    }
+
     .youtube-container {
       position: relative;
       width: 70vw;
       max-width: 800px;
       margin-top: 20px;
-      background-color: #222;
-      border: 2px solid #ffa500;
-      border-radius: 8px;
+      background-color: var(--card-bg);
+      border: 2px solid var(--primary-color);
+      border-radius: var(--border-radius);
       padding: 16px;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 16px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
     }
+
     .youtube-embed {
       width: 100%;
       aspect-ratio: 16/9;
       border: none;
-      loading: lazy;
+      border-radius: 4px;
     }
-    @media (max-aspect-ratio: 3/4) {
-      .slider-container { width: 90vw; aspect-ratio: 16/9; }
-      .download-tabs { width: 90vw; }
-      .youtube-container { width: 90vw; }
-      header { height: 48px; padding: 0 12px; }
-      .logo-container img, .youtube-icon-link img { height: 28px; }
-      .arrow { width: 36px; height: 36px; font-size: 20px; }
+
+    @media (max-width: 768px), (max-aspect-ratio: 3/4) {
+      .slider-container, .download-tabs, .youtube-container {
+        width: 92vw;
+      }
+      header {
+        height: 48px;
+        padding: 0 12px;
+      }
+      .title {
+        font-size: 13px;
+      }
+      .logo-container img, .youtube-icon-link img {
+        height: 26px;
+      }
+      .arrow {
+        width: 34px;
+        height: 34px;
+        font-size: 16px;
+      }
+      .download-button {
+        width: 100%;
+        justify-content: center;
+        box-sizing: border-box;
+      }
     }
+
     .fullscreen-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background-color: rgba(0,0,0,0.95);
+      background-color: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 2000;
+      animation: fadeIn 0.2s ease;
     }
+
     .fullscreen-container {
       position: relative;
       width: min(90vw, calc(90vh * 16/9));
       aspect-ratio: 16/9;
       max-width: 1000px;
-      border: 4px solid #ffa500;
+      border: 3px solid var(--primary-color);
       overflow: hidden;
       user-select: none;
-      background: #000;
-      border-radius: 8px;
+      background: #000000;
+      border-radius: var(--border-radius);
+      box-shadow: 0 0 25px rgba(255, 165, 0, 0.3);
     }
+
     .fullscreen-slider {
       position: relative;
       width: 100%;
       height: 100%;
     }
+
     .fullscreen-slider img {
       position: absolute;
       top: 0;
@@ -285,73 +414,100 @@
       user-select: none;
       -webkit-user-drag: none;
     }
+
     .fullscreen-arrow {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      width: 50px;
-      height: 50px;
+      width: 46px;
+      height: 46px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
+      font-size: 22px;
       color: white;
-      background-color: rgba(0,0,0,0.5);
+      background-color: rgba(0, 0, 0, 0.6);
       cursor: pointer;
       z-index: 2;
       user-select: none;
       pointer-events: auto;
+      border-radius: 50%;
+      transition: background-color 0.2s ease, transform 0.2s ease;
     }
-    .fullscreen-arrow.left { left: 10px; }
-    .fullscreen-arrow.right { right: 10px; }
+
+    .fullscreen-arrow:hover {
+      background-color: rgba(255, 165, 0, 0.8);
+      color: #000;
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .fullscreen-arrow.left { left: 12px; }
+    .fullscreen-arrow.right { right: 12px; }
+
     .close-icon {
       position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 40px;
-      height: 40px;
-      font-size: 24px;
+      top: 12px;
+      right: 12px;
+      width: 38px;
+      height: 38px;
+      font-size: 20px;
       color: white;
-      background-color: rgba(0,0,0,0.5);
+      background-color: rgba(0, 0, 0, 0.6);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      z-index: 2;
+      z-index: 3;
       border-radius: 50%;
       pointer-events: auto;
       user-select: none;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .close-icon:hover {
+      background-color: rgba(255, 0, 0, 0.8);
+      transform: scale(1.1);
     }
   </style>
 </head>
 <body>
   <header id="header">
-    <div class="logo-container"><img src="img/logo.webp" alt="Logo" draggable="false" /></div>
+    <div class="logo-container">
+      <img src="img/logo.webp" alt="Logo BT4 HD" draggable="false" />
+    </div>
     <div class="title">Dragon Ball Z - Budokai Tenkaichi 4 Texture Pack HD</div>
-    <a href="https://www.youtube.com/@AngeL06oficial" target="_blank" class="youtube-icon-link" aria-label="Visitar canal de YouTube"><img src="img/youtube-icon.webp" alt="YouTube" draggable="false" /></a>
+    <a href="https://www.youtube.com/@AngeL06oficial" target="_blank" class="youtube-icon-link" aria-label="Visitar canal de YouTube">
+      <img src="img/youtube-icon.webp" alt="YouTube" draggable="false" />
+    </a>
   </header>
+
   <main>
     <div>
       <div class="slider-container">
-        <div class="arrow left">&#10094;</div>
-        <div class="arrow right">&#10095;</div>
+        <div class="arrow left" aria-label="Imagen anterior">&#10094;</div>
+        <div class="arrow right" aria-label="Siguiente imagen">&#10095;</div>
         <div class="slider-images" id="sliderImages"></div>
+        <div class="dots-container" id="dotsContainer"></div>
       </div>
+
       <div class="download-tabs" id="downloadTabs">
         <div class="tab-buttons" id="tabButtons"></div>
         <div class="tab-contents" id="tabContents"></div>
       </div>
+
       <div class="youtube-container" id="youtubeContainer" style="display: none;"></div>
     </div>
   </main>
+
   <div class="fullscreen-overlay" id="fullscreenOverlay">
     <div class="fullscreen-container">
-      <div class="fullscreen-arrow left">&#10094;</div>
-      <div class="fullscreen-arrow right">&#10095;</div>
-      <span class="close-icon">&#10006;</span>
+      <div class="fullscreen-arrow left" aria-label="Imagen anterior">&#10094;</div>
+      <div class="fullscreen-arrow right" aria-label="Siguiente imagen">&#10095;</div>
+      <span class="close-icon" aria-label="Cerrar">&#10006;</span>
       <div class="fullscreen-slider" id="fullscreenSlider"></div>
     </div>
   </div>
+
   <script src="list.js"></script>
   <script src="img.js"></script>
   <script>
@@ -361,6 +517,7 @@
     const header = document.getElementById("header");
     const sliderContainer = document.querySelector('.slider-container');
     const fullscreenContainer = document.querySelector('.fullscreen-container');
+    const dotsContainer = document.getElementById('dotsContainer');
     const btnPrev = document.querySelector('.slider-container .arrow.left');
     const btnNext = document.querySelector('.slider-container .arrow.right');
     const fsPrev = document.querySelector('.fullscreen-container .fullscreen-arrow.left');
@@ -369,11 +526,13 @@
     const tabButtons = document.getElementById('tabButtons');
     const tabContents = document.getElementById('tabContents');
     const youtubeContainer = document.getElementById('youtubeContainer');
+
     let currentIndex = 0;
     let fullscreenIndex = 0;
     let imageList = [];
     let isAnimating = false;
     let isAnimatingFS = false;
+
     function setNavEnabled(enabled) {
       const pointers = enabled ? 'auto' : 'none';
       btnPrev.style.pointerEvents = pointers;
@@ -382,65 +541,106 @@
       fsNext.style.pointerEvents = pointers;
       btnClose.style.pointerEvents = pointers;
     }
+
     function preloadImages(names) {
-      names.forEach(name => { const img = new Image(); img.src = `img/${name}`; });
+      names.forEach(name => {
+        const img = new Image();
+        img.src = `img/${name}`;
+      });
     }
+
+    function createDots() {
+      dotsContainer.innerHTML = '';
+      imageList.forEach((_, idx) => {
+        const dot = document.createElement('div');
+        dot.className = `dot ${idx === currentIndex ? 'active' : ''}`;
+        dot.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (!isAnimating && idx !== currentIndex) {
+            showSlide(idx);
+          }
+        });
+        dotsContainer.appendChild(dot);
+      });
+    }
+
+    function updateDots() {
+      const dots = dotsContainer.querySelectorAll('.dot');
+      dots.forEach((dot, idx) => {
+        dot.classList.toggle('active', idx === currentIndex);
+      });
+    }
+
     function buildDownloadTabs() {
       if (typeof listData === 'undefined') return;
       const lines = listData.trim().split('\n');
       const sections = {};
       let currentSection = null;
+
       lines.forEach(raw => {
-        const line = raw.trim(); if (!line) return;
+        const line = raw.trim();
+        if (!line) return;
         if (line.endsWith(':')) {
-          currentSection = line.slice(0,-1).trim();
+          currentSection = line.slice(0, -1).trim();
           if (currentSection) sections[currentSection] = [];
-        }
-        else if (line.startsWith('-') && currentSection) {
+        } else if (line.startsWith('-') && currentSection) {
           const match = line.slice(1).trim().match(/^(.*?)\s+"([^"]+)"$/);
           if (match) sections[currentSection].push({ name: match[1].trim(), url: match[2].trim() });
         }
       });
-      let first=true;
+
+      let first = true;
       for (const [section, items] of Object.entries(sections)) {
         if (section.toLowerCase() === 'youtube') continue;
-        const btn=document.createElement('button'); btn.textContent=section;
-        if(first) btn.classList.add('active');
-        const contentDiv=document.createElement('div'); contentDiv.classList.add('tab-content-container');
-        if(first) contentDiv.classList.add('active');
-        items.forEach(item=>{
-          const dlLink=document.createElement('a');
-          dlLink.className='download-button';
-          dlLink.textContent=item.name;
-          dlLink.href=item.url;
-          dlLink.target='_blank';
-          dlLink.rel='noopener noreferrer';
+
+        const btn = document.createElement('button');
+        btn.textContent = section;
+        if (first) btn.classList.add('active');
+
+        const contentDiv = document.createElement('div');
+        contentDiv.classList.add('tab-content-container');
+        if (first) contentDiv.classList.add('active');
+
+        items.forEach(item => {
+          const dlLink = document.createElement('a');
+          dlLink.className = 'download-button';
+          dlLink.textContent = item.name;
+          dlLink.href = item.url;
+          dlLink.target = '_blank';
+          dlLink.rel = 'noopener noreferrer';
           contentDiv.appendChild(dlLink);
         });
-        btn.addEventListener('click',()=>{
-          document.querySelectorAll('#tabButtons button').forEach(b=>b.classList.remove('active'));
-          document.querySelectorAll('#tabContents .tab-content-container').forEach(c=>c.classList.remove('active'));
-          btn.classList.add('active'); contentDiv.classList.add('active');
+
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('#tabButtons button').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('#tabContents .tab-content-container').forEach(c => c.classList.remove('active'));
+          btn.classList.add('active');
+          contentDiv.classList.add('active');
         });
+
         tabButtons.appendChild(btn);
         tabContents.appendChild(contentDiv);
-        first=false;
+        first = false;
       }
     }
+
     function buildYouTubeEmbeds() {
       if (typeof listData === 'undefined') return;
       const lines = listData.trim().split('\n');
       let currentSection = null;
       const ytLinks = [];
+
       lines.forEach(raw => {
-        const line = raw.trim(); if (!line) return;
+        const line = raw.trim();
+        if (!line) return;
         if (line.endsWith(':')) {
-          currentSection = line.slice(0,-1).trim().toLowerCase();
+          currentSection = line.slice(0, -1).trim().toLowerCase();
         } else if (line.startsWith('-') && currentSection === 'youtube') {
           const link = line.slice(1).trim();
           ytLinks.push(link);
         }
       });
+
       if (ytLinks.length) {
         youtubeContainer.style.display = 'flex';
         ytLinks.forEach(link => {
@@ -452,8 +652,8 @@
             } else if (url.hostname === 'youtu.be') {
               videoId = url.pathname.slice(1);
             }
-          } catch(err) {
-          }
+          } catch (err) {}
+
           if (videoId) {
             const iframe = document.createElement('iframe');
             iframe.className = 'youtube-embed';
@@ -470,65 +670,206 @@
         });
       }
     }
-    window.addEventListener('load', ()=>{
-      if(typeof listData!=='undefined') buildDownloadTabs();
-      if(typeof imgData!=='undefined'){
-        imageList=imgData.trim().split('\n').filter(Boolean).map(l=>l.replace(/^-/,"")); preloadImages(imageList);
-        imageList.forEach((imgName,index)=>{
-          const img=document.createElement('img'); img.src=`img/${imgName}`; img.alt=`Imagen ${index+1}`; img.loading='eager'; img.draggable=false;
-          img.addEventListener('dragstart',e=>e.preventDefault()); img.addEventListener('click',e=>{e.stopPropagation(); if(!isAnimatingFS) openFullscreen(index);});
+
+    function initImages() {
+      if (typeof imgData !== 'undefined') {
+        imageList = imgData.trim().split('\n').filter(Boolean).map(l => l.replace(/^-/, ""));
+        preloadImages(imageList);
+        createDots();
+
+        imageList.forEach((imgName, index) => {
+          const img = document.createElement('img');
+          img.src = `img/${imgName}`;
+          img.alt = `Captura BT4 HD ${index + 1}`;
+          img.loading = 'eager';
+          img.draggable = false;
+          img.addEventListener('dragstart', e => e.preventDefault());
+          img.addEventListener('click', e => {
+            e.stopPropagation();
+            if (!isAnimatingFS) openFullscreen(index);
+          });
           sliderImages.appendChild(img);
-          const imgFull=document.createElement('img'); imgFull.src=`img/${imgName}`; imgFull.alt=`Imagen ${index+1}`; imgFull.loading='eager'; imgFull.draggable=false;
-          imgFull.addEventListener('dragstart',e=>e.preventDefault()); fullscreenSlider.appendChild(imgFull);
+
+          const imgFull = document.createElement('img');
+          imgFull.src = `img/${imgName}`;
+          imgFull.alt = `Captura BT4 HD ${index + 1}`;
+          imgFull.loading = 'eager';
+          imgFull.draggable = false;
+          imgFull.addEventListener('dragstart', e => e.preventDefault());
+          fullscreenSlider.appendChild(imgFull);
         });
-        const imgs=sliderImages.querySelectorAll('img'); imgs.forEach((img,i)=>img.style.display=i===currentIndex?'block':'none');
+
+        const imgs = sliderImages.querySelectorAll('img');
+        imgs.forEach((img, i) => img.style.display = i === currentIndex ? 'block' : 'none');
       }
+    }
+
+    window.addEventListener('load', () => {
+      if (typeof listData !== 'undefined') buildDownloadTabs();
+      initImages();
       buildYouTubeEmbeds();
     });
-    if(typeof imgData==='undefined'){
-      window.addEventListener('load', ()=>{
-        const imgs=sliderImages.querySelectorAll('img'); imgs.forEach((img,i)=>img.style.display=i===currentIndex?'block':'none');
-      });
-    }
-    function animateSlide(currentImg,nextImg,direction,containerType){
+
+    function animateSlide(currentImg, nextImg, direction, containerType) {
       setNavEnabled(false);
-      if(containerType==='slider') sliderImages.style.pointerEvents='none'; else fullscreenSlider.style.pointerEvents='none';
-      currentImg.style.transition='transform 0.5s ease'; nextImg.style.transition='transform 0.5s ease';
-      nextImg.style.display='block'; nextImg.style.transform=`translateX(${direction*100}%)`;
-      void nextImg.offsetWidth; currentImg.style.transform=`translateX(${-direction*100}%)`; nextImg.style.transform='translateX(0)';
-      const cleanup=e=>{ if(e.target!==currentImg) return;
-        currentImg.style.display='none'; currentImg.style.transition=''; currentImg.style.transform='translateX(0)'; nextImg.style.transition='';
-        if(containerType==='slider'){ isAnimating=false; sliderImages.style.pointerEvents='auto'; }
-        else{ isAnimatingFS=false; fullscreenSlider.style.pointerEvents='auto'; }
-        setNavEnabled(true); currentImg.removeEventListener('transitionend',cleanup);
+      if (containerType === 'slider') sliderImages.style.pointerEvents = 'none';
+      else fullscreenSlider.style.pointerEvents = 'none';
+
+      currentImg.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+      nextImg.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+
+      nextImg.style.display = 'block';
+      nextImg.style.transform = `translateX(${direction * 100}%)`;
+      void nextImg.offsetWidth;
+
+      currentImg.style.transform = `translateX(${-direction * 100}%)`;
+      nextImg.style.transform = 'translateX(0)';
+
+      const cleanup = e => {
+        if (e.target !== currentImg) return;
+        currentImg.style.display = 'none';
+        currentImg.style.transition = '';
+        currentImg.style.transform = 'translateX(0)';
+        nextImg.style.transition = '';
+
+        if (containerType === 'slider') {
+          isAnimating = false;
+          sliderImages.style.pointerEvents = 'auto';
+        } else {
+          isAnimatingFS = false;
+          fullscreenSlider.style.pointerEvents = 'auto';
+        }
+        setNavEnabled(true);
+        currentImg.removeEventListener('transitionend', cleanup);
       };
-      currentImg.addEventListener('transitionend',cleanup);
+      currentImg.addEventListener('transitionend', cleanup);
     }
-    function showSlide(index){ if(!imageList.length||isAnimating) return; const imgs=sliderImages.querySelectorAll('img'); const last=imageList.length-1;
-      let newIndex=(index+imageList.length)%imageList.length; if(newIndex===currentIndex) return;
-      const currentImg=imgs[currentIndex], nextImg=imgs[newIndex]; isAnimating=true;
-      if(currentImg.style.display==='none'){
-        imgs.forEach((img,i)=>img.style.display=i===newIndex?'block':'none'); isAnimating=false; currentIndex=newIndex; return;
+
+    function showSlide(index) {
+      if (!imageList.length || isAnimating) return;
+      const imgs = sliderImages.querySelectorAll('img');
+      const last = imageList.length - 1;
+      let newIndex = (index + imageList.length) % imageList.length;
+
+      if (newIndex === currentIndex) return;
+
+      const currentImg = imgs[currentIndex];
+      const nextImg = imgs[newIndex];
+      isAnimating = true;
+
+      if (currentImg.style.display === 'none') {
+        imgs.forEach((img, i) => img.style.display = i === newIndex ? 'block' : 'none');
+        isAnimating = false;
+        currentIndex = newIndex;
+        updateDots();
+        return;
       }
+
       let direction;
-      if(currentIndex===0 && newIndex===last) direction=-1;
-      else if(currentIndex===last && newIndex===0) direction=1;
-      else if(newIndex>currentIndex) direction=1;
-      else direction=-1;
-      animateSlide(currentImg,nextImg,direction,'slider'); currentIndex=newIndex;
+      if (currentIndex === 0 && newIndex === last) direction = -1;
+      else if (currentIndex === last && newIndex === 0) direction = 1;
+      else if (newIndex > currentIndex) direction = 1;
+      else direction = -1;
+
+      animateSlide(currentImg, nextImg, direction, 'slider');
+      currentIndex = newIndex;
+      updateDots();
     }
-    btnNext.addEventListener('click',e=>{e.stopPropagation(); if(!isAnimating) showSlide(currentIndex+1);} );
-    btnPrev.addEventListener('click',e=>{e.stopPropagation(); if(!isAnimating) showSlide(currentIndex-1);} );
-    function openFullscreen(index){ if(isAnimatingFS) return; fullscreenIndex=index; overlay.style.display='flex'; header.classList.add('hidden');
-      const imgs=fullscreenSlider.querySelectorAll('img'); imgs.forEach((img,i)=>img.style.display=i===index?'block':'none');
+
+    btnNext.addEventListener('click', e => { e.stopPropagation(); if (!isAnimating) showSlide(currentIndex + 1); });
+    btnPrev.addEventListener('click', e => { e.stopPropagation(); if (!isAnimating) showSlide(currentIndex - 1); });
+
+    function openFullscreen(index) {
+      if (isAnimatingFS) return;
+      fullscreenIndex = index;
+      overlay.style.display = 'flex';
+      header.classList.add('hidden');
+      const imgs = fullscreenSlider.querySelectorAll('img');
+      imgs.forEach((img, i) => img.style.display = i === index ? 'block' : 'none');
     }
-    function nextFullscreen(){ if(isAnimatingFS||!imageList.length) return; const imgs=fullscreenSlider.querySelectorAll('img'); const currentImg=imgs[fullscreenIndex]; const newIndex=(fullscreenIndex+1)%imageList.length; const nextImg=imgs[newIndex]; isAnimatingFS=true; animateSlide(currentImg,nextImg,1,'fullscreen'); fullscreenIndex=newIndex; }
-    function prevFullscreen(){ if(isAnimatingFS||!imageList.length) return; const imgs=fullscreenSlider.querySelectorAll('img'); const currentImg=imgs[fullscreenIndex]; const newIndex=(fullscreenIndex-1+imageList.length)%imageList.length; const nextImg=imgs[newIndex]; isAnimatingFS=true; animateSlide(currentImg,nextImg,-1,'fullscreen'); fullscreenIndex=newIndex; }
-    fsNext.addEventListener('click',e=>{e.stopPropagation(); nextFullscreen();});
-    fsPrev.addEventListener('click',e=>{e.stopPropagation(); prevFullscreen();});
-    btnClose.addEventListener('click',e=>{e.stopPropagation(); overlay.style.display='none'; header.classList.remove('hidden');});
-    sliderContainer.addEventListener('wheel',e=>{ e.preventDefault(); e.stopPropagation(); if(isAnimating) return; if(e.deltaY>0) showSlide(currentIndex+1); else showSlide(currentIndex-1); });
-    fullscreenContainer.addEventListener('wheel',e=>{ e.preventDefault(); e.stopPropagation(); if(isAnimatingFS) return; if(e.deltaY>0) nextFullscreen(); else prevFullscreen(); });
+
+    function closeFullscreen() {
+      overlay.style.display = 'none';
+      header.classList.remove('hidden');
+    }
+
+    function nextFullscreen() {
+      if (isAnimatingFS || !imageList.length) return;
+      const imgs = fullscreenSlider.querySelectorAll('img');
+      const currentImg = imgs[fullscreenIndex];
+      const newIndex = (fullscreenIndex + 1) % imageList.length;
+      const nextImg = imgs[newIndex];
+      isAnimatingFS = true;
+      animateSlide(currentImg, nextImg, 1, 'fullscreen');
+      fullscreenIndex = newIndex;
+    }
+
+    function prevFullscreen() {
+      if (isAnimatingFS || !imageList.length) return;
+      const imgs = fullscreenSlider.querySelectorAll('img');
+      const currentImg = imgs[fullscreenIndex];
+      const newIndex = (fullscreenIndex - 1 + imageList.length) % imageList.length;
+      const nextImg = imgs[newIndex];
+      isAnimatingFS = true;
+      animateSlide(currentImg, nextImg, -1, 'fullscreen');
+      fullscreenIndex = newIndex;
+    }
+
+    fsNext.addEventListener('click', e => { e.stopPropagation(); nextFullscreen(); });
+    fsPrev.addEventListener('click', e => { e.stopPropagation(); prevFullscreen(); });
+    btnClose.addEventListener('click', e => { e.stopPropagation(); closeFullscreen(); });
+
+    sliderContainer.addEventListener('wheel', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (isAnimating) return;
+      if (e.deltaY > 0) showSlide(currentIndex + 1);
+      else showSlide(currentIndex - 1);
+    }, { passive: false });
+
+    fullscreenContainer.addEventListener('wheel', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (isAnimatingFS) return;
+      if (e.deltaY > 0) nextFullscreen();
+      else prevFullscreen();
+    }, { passive: false });
+
+    // Gestos táctiles (Swipe)
+    function addTouchSwipe(element, onSwipeLeft, onSwipeRight) {
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      element.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+
+      element.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      }, { passive: true });
+
+      function handleSwipe() {
+        const threshold = 40;
+        if (touchEndX < touchStartX - threshold) onSwipeLeft();
+        if (touchEndX > touchStartX + threshold) onSwipeRight();
+      }
+    }
+
+    addTouchSwipe(sliderContainer, () => showSlide(currentIndex + 1), () => showSlide(currentIndex - 1));
+    addTouchSwipe(fullscreenContainer, () => nextFullscreen(), () => prevFullscreen());
+
+    // Atajos de teclado
+    window.addEventListener('keydown', e => {
+      if (overlay.style.display === 'flex') {
+        if (e.key === 'ArrowRight') nextFullscreen();
+        else if (e.key === 'ArrowLeft') prevFullscreen();
+        else if (e.key === 'Escape') closeFullscreen();
+      } else {
+        if (e.key === 'ArrowRight') showSlide(currentIndex + 1);
+        else if (e.key === 'ArrowLeft') showSlide(currentIndex - 1);
+      }
+    });
   </script>
 </body>
 </html>
