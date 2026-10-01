@@ -6,6 +6,7 @@ Texture Pack:
 Extra:
 -Installation explanation @ENG "https://github.com/Angel06a/BT4-HD/blob/main/README.md#%EF%B8%8Finstallation"
 -Explicación de instalación @ESP "https://github.com/Angel06a/BT4-HD/blob/main/README.es.md#%EF%B8%8Finstalaci%C3%B3n"
+-Unlock All Characters "https://angel06a.github.io/BT4-HD/img/Unlock-All-Characters.webp"
 Youtube:
 -https://www.youtube.com/watch?v=tvbWdqMfCr4
 `;
