@@ -400,11 +400,19 @@ document.addEventListener("DOMContentLoaded", () => {
         facade.setAttribute('data-i18n-aria', 'playAria');
         facade.setAttribute('aria-label', t('playAria'));
 
+        // Miniatura en la mejor calidad disponible: 1280x720 -> 640x480 -> 480x360
         const thumb = document.createElement('img');
-        thumb.src = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+        const thumbQualities = ['maxresdefault', 'sddefault', 'hqdefault'];
+        let q = 0;
+        const setThumb = () => { thumb.src = `https://i.ytimg.com/vi/${videoId}/${thumbQualities[q]}.jpg`; };
+        const nextThumb = () => { if (q < thumbQualities.length - 1) { q++; setThumb(); } };
+        thumb.addEventListener('error', nextThumb);
+        // Si un tamaño no existe, YouTube a veces devuelve una imagen gris diminuta (120px)
+        thumb.addEventListener('load', () => { if (thumb.naturalWidth <= 120) nextThumb(); });
         thumb.alt = '';
         thumb.loading = 'lazy';
         thumb.decoding = 'async';
+        setThumb();
         facade.appendChild(thumb);
 
         facade.insertAdjacentHTML('beforeend',
