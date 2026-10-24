@@ -4,6 +4,7 @@ Texture Pack:
 -Texture Pack HD v1.07 "https://www.mediafire.com/file/ie6dmm5lb6v4ern/dbz_bt4_HD_v1.07.zip/file"
 -Texture Pack Lite v1.07 "https://www.mediafire.com/file/ju06p3b2eqjr23x/dbz_bt4_Lite_v1.07.zip/file"
 -Tenkaichi 3 HD v1.00 "https://www.mediafire.com/file/y91bf2imolofuol/dbz_bt3_HD_v1.00.zip/file"
+-Tenkaichi 3 Lite v1.00 "https://www.mediafire.com/file/s5p5d5sq7jzqubl/dbz_bt3_Lite_v1.00.zip/file"
 Extra:
 -Installation explanation @ENG "https://github.com/Angel06a/BT4-HD/blob/main/README.md#%EF%B8%8Finstallation"
 -Explicación de instalación @ESP "https://github.com/Angel06a/BT4-HD/blob/main/README.es.md#%EF%B8%8Finstalaci%C3%B3n"
